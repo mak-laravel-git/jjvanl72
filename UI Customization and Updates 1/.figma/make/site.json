@@ -1,0 +1,10 @@
+{
+  "description": "Streamlines dental case submissions by customizing impression types, material selections, and patient data for efficient lab processing and management.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dental Case Creation</title>
+  <style>
+    :root {
+      --primary: #0b5394;
+      --primary-dark: #073763;
+      --primary-soft: #e8f0fa;
+      --accent: #c95f28;
+      --accent-soft: #fdf0e8;
+      --green: #16845c;
+      --red: #c52e47;
+      --yellow: #ffae1a;
+      --text: #2c2c33;
+      --muted: #7a7a82;
+      --border: #d4d4da;
+      --panel: #fff;
+      --page: #f6f7fb;
+      --shadow: 0 2px 8px rgba(11,83,148,0.10);
+      --radius: 5px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-width: 1180px;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background: var(--page);
+    }
+
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { opacity: 0.35; cursor: not-allowed; }
+    svg { display: block; }
+
+    .app { height: 100vh; display: flex; flex-direction: column; }
+
+    /* ===== Buttons / Fields ===== */
+    .btn {
+      min-height: 38px; padding: 7px 15px; border: 1px solid transparent;
+      border-radius: 3px; display: inline-flex; align-items: center;
+      justify-content: center; gap: 7px; background: white;
+      color: var(--primary); font-weight: 650;
+    }
+    .btn svg { width: 20px; height: 20px; }
+    .btn-outline { border-color: var(--primary); }
+    .btn-primary { color: white; border-color: var(--primary); background: var(--primary); }
+    .btn-success { color: white; border-color: var(--green); background: var(--green); }
+    .btn-danger { color: white; border-color: var(--red); background: var(--red); }
+    .btn-small { min-height: 32px; padding: 5px 10px; font-size: 12px; }
+
+    .icon-button {
+      width: 36px; height: 36px; padding: 5px; border: 0;
+      color: var(--primary); background: transparent; display: grid; place-items: center;
+    }
+    .icon-button svg { width: 23px; height: 23px; }
+
+    .field-group { margin-bottom: 15px; }
+    .field-group label { display: block; margin-bottom: 5px; color: #555; font-size: 13px; font-weight: 650; }
+
+    .input, .select, .textarea {
+      width: 100%; border: 1px solid #888; border-radius: 2px;
+      outline: none; background: white; color: var(--text);
+    }
+    .input, .select { height: 42px; padding: 0 11px; }
+    .textarea { min-height: 110px; resize: vertical; padding: 11px; }
+    .input:focus, .select:focus, .textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(11,83,148,0.12);
+    }
+    .required { color: #d8394d; }
+    .muted { color: var(--muted); }
+
+    /* ===== Header ===== */
+    .topbar {
+      height: 102px; flex: 0 0 102px;
+      display: grid; grid-template-columns: 39% 41% 20%;
+      align-items: center; padding: 15px 28px;
+      background: white; border-bottom: 2px solid var(--primary);
+      z-index: 10;
+    }
+    .topbar.config-header { grid-template-columns: 39% 20% 41%; }
+    .header-left, .header-center, .header-right {
+      display: flex; align-items: center; min-width: 0;
+    }
+    .header-left { gap: 18px; }
+    .header-center { justify-content: center; }
+    .header-right { justify-content: flex-end; gap: 16px; }
+
+    .page-title, .center-title, .right-title {
+      color: var(--primary); font-weight: 300; line-height: 1;
+    }
+    .page-title { font-size: 41px; white-space: nowrap; }
+    .center-title { font-size: 41px; text-align: center; }
+    .right-title { margin-right: auto; font-size: 40px; }
+
+    .header-buttons { margin-left: auto; display: flex; gap: 12px; }
+    .header-button {
+      min-width: 80px; height: 37px; padding: 5px 11px;
+      border: 1px solid var(--primary); border-radius: 3px;
+      background: white; color: var(--primary);
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px; font-size: 13px; font-weight: 650;
+    }
+    .header-button:hover { background: var(--primary-soft); }
+    .header-button svg { width: 20px; height: 20px; }
+
+    .back-button { width: 48px; height: 48px; padding: 5px; border: 0; color: var(--primary); background: transparent; }
+    .back-button svg { width: 39px; height: 39px; }
+
+    .tooth-header { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .header-subtitle { color: #555; font-size: 16px; white-space: nowrap; }
+
+    /* ===== Layout ===== */
+    .workbench {
+      height: calc(100vh - 102px); min-height: 0;
+      display: grid; grid-template-columns: 39% 41% 20%;
+      padding: 11px 27px 25px;
+      background: linear-gradient(90deg, #f6f7fb 0%, #ffffff 45%, #f6f7fb 100%);
+    }
+    .workbench.config-layout { grid-template-columns: 39% 20% 41%; }
+
+    .left-panel, .center-panel, .right-panel { min-width: 0; min-height: 0; }
+    .left-panel { padding-right: 27px; overflow-y: auto; }
+    .center-panel { position: relative; overflow: hidden; }
+    .right-panel {
+      position: relative; padding-left: 27px;
+      border-left: 1px solid #eaeaea; overflow-y: auto;
+    }
+    .config-layout .center-panel { padding: 0 20px 0 7px; overflow-y: auto; }
+    .config-layout .right-panel { padding: 0 17px 20px 28px; }
+
+    /* ===== Helpers ===== */
+    .flow-help {
+      min-height: 38px; margin: 4px 7px 11px; padding: 8px 10px;
+      display: flex; align-items: center; gap: 8px;
+      color: var(--accent); font-size: 14px; font-weight: 650;
+    }
+    .flow-help svg { width: 19px; height: 19px; flex: 0 0 auto; }
+    .screen-help {
+      margin: 7px 0 12px; padding: 10px 12px;
+      color: #705225; background: #fff8df;
+      border: 1px solid #f0d99e; border-radius: 3px;
+      font-size: 13px; line-height: 1.4;
+    }
+
+    /* ===== Project panel ===== */
+    .panel-card {
+      margin-bottom: 19px; overflow: hidden;
+      border-radius: var(--radius); background: white;
+      box-shadow: var(--shadow);
+    }
+    .project-date-row {
+      min-height: 57px; padding: 0 20px;
+      display: flex; align-items: center; gap: 11px;
+      border-bottom: 1px solid #bbb; color: #555; font-size: 17px;
+    }
+    .project-date-row svg { width: 19px; height: 19px; }
+    .due-label { margin-left: auto; color: var(--accent); font-weight: 700; }
+    .project-form { padding: 28px 20px 18px; }
+    .project-form-grid {
+      display: grid; grid-template-columns: minmax(0, 1fr) 180px;
+      gap: 15px; margin-bottom: 24px;
+    }
+    .project-form-full { margin-bottom: 24px; }
+
+    .floating-field {
+      min-height: 42px; position: relative;
+      border: 1px solid #888; border-radius: 2px; background: white;
+    }
+    .floating-field label {
+      position: absolute; top: -10px; left: 10px;
+      padding: 0 5px; color: #555; background: white; font-size: 13px;
+      font-weight: 650;
+    }
+    .floating-field input, .floating-field select {
+      width: 100%; height: 40px; padding: 8px 10px;
+      border: 0; outline: none; background: transparent; color: #333;
+    }
+    .floating-field input[disabled], .floating-field select[disabled] {
+      background: #f0f4f8; color: #666; cursor: default;
+    }
+
+    .notes-head, .preview-head {
+      min-height: 58px; padding: 0 20px;
+      display: flex; align-items: center; gap: 9px;
+      border-bottom: 1px solid #bbb; color: #555; font-weight: 650;
+    }
+    .notes-head svg, .preview-head svg { width: 20px; height: 20px; }
+    .notes-head .expand-icon { margin-left: auto; }
+    .notes-body { padding: 20px; }
+    .notes-body textarea {
+      width: 100%; height: 285px; padding: 13px;
+      resize: none; border: 1px solid #888; border-radius: 3px; outline: none;
+    }
+    .preview-tabs {
+      min-height: 56px; padding: 0 20px;
+      display: flex; align-items: center; gap: 24px;
+      border-bottom: 1px solid #888; color: #888; font-size: 14px; font-weight: 650;
+    }
+    .preview-tab { min-height: 56px; display: flex; align-items: center; gap: 7px; }
+    .preview-tab.active { color: #555; border-bottom: 3px solid var(--accent); }
+    .preview-tab svg { width: 19px; height: 19px; }
+    .preview-body { min-height: 69px; padding: 22px 20px; font-size: 15px; }
+
+    /* ===== Dental chart ===== */
+    .chart-area {
+      height: 100%; display: flex; flex-direction: column;
+      align-items: flex-start; position: relative;
+    }
+    .chart-toolbar {
+      width: 100%; min-height: 40px;
+      display: flex; align-items: center; justify-content: center; gap: 13px;
+      color: var(--primary); font-size: 15px; font-weight: 700;
+    }
+    .toggle {
+      width: 33px; height: 16px; padding: 0; position: relative;
+      border: 0; border-radius: 20px; background: #b0b0b8;
+    }
+    .toggle::after {
+      content: ""; position: absolute; left: 0; top: -1px;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--primary); transition: 0.18s ease;
+    }
+    .toggle.on::after { left: 16px; }
+
+    .chart-with-options {
+      display: flex; align-items: flex-start; gap: 14px; flex: 1; min-height: 0;
+    }
+    .chart-svg-wrap { position: relative; flex: 0 0 auto; }
+    .dental-chart {
+      width: 380px; height: auto;
+      max-height: calc(100vh - 220px);
+    }
+    .tooth { cursor: pointer; outline: none; }
+    .tooth-body {
+      fill: var(--tooth-fill, #d4d4d6); stroke: #444; stroke-width: 1.1; transition: 0.16s ease;
+    }
+    .tooth:hover .tooth-body { filter: brightness(0.91); stroke-width: 1.8; }
+    .tooth-groove { fill: none; stroke: #4a4a4a; stroke-width: 1.05; stroke-linecap: round; }
+    .tooth text {
+      fill: var(--tooth-text, #111); text-anchor: middle;
+      dominant-baseline: middle; font-size: 15px; pointer-events: none;
+    }
+    .chart-legend {
+      position: absolute; left: 50%; top: 390px;
+      min-width: 200px; display: grid; gap: 4px; font-size: 20px;
+    }
+    .legend-row { display: flex; align-items: center; gap: 8px; }
+    .legend-color { width: 17px; height: 17px; flex: 0 0 auto; }
+
+    .chart-side-options { flex: 1; padding-top: 10px; overflow-y: auto; }
+    .side-option-label {
+      display: block; font-size: 12px; font-weight: 700;
+      color: #555; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .side-option-select {
+      width: 100%; height: 38px; padding: 0 10px;
+      border: 1px solid #888; border-radius: 2px; background: white;
+      color: var(--text); font-size: 13px; margin-bottom: 14px; outline: none;
+    }
+    .side-option-select:focus { border-color: var(--primary); }
+    .courier-notice {
+      padding: 11px 12px; background: #e8f4fd;
+      border: 1px solid #9dc3e6; border-radius: 4px;
+      font-size: 12px; line-height: 1.55; color: #0b4a7c; margin-bottom: 10px;
+    }
+    .courier-notice strong { display: block; margin-bottom: 4px; font-size: 13px; }
+
+    /* ===== Product catalogue ===== */
+    .catalog { padding: 0 12px 20px; }
+    .catalog-selected {
+      margin: 5px 0 10px; padding: 9px 11px;
+      color: var(--primary); background: var(--primary-soft);
+      border-left: 4px solid var(--primary); font-size: 13px; line-height: 1.4;
+    }
+    .category { margin-bottom: 10px; }
+    .category-title { margin-bottom: 4px; color: #444; font-size: 17px; }
+    .product-grid {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px;
+    }
+    .product-button {
+      min-height: 48px; padding: 6px 9px; border: 0; border-radius: 2px;
+      display: flex; align-items: center; gap: 7px;
+      color: white; background: var(--product-color);
+      text-align: left; font-size: 12px; font-weight: 700; line-height: 1.1;
+    }
+    .product-button:hover { filter: brightness(1.07); }
+    .product-button.selected { outline: 4px solid #f29065; outline-offset: -4px; }
+    .product-button svg { width: 35px; height: 28px; flex: 0 0 auto; }
+
+    /* ===== Material cards ===== */
+    .material-pane-title, .options-pane-title {
+      margin: 0 0 9px; color: var(--primary); font-size: 36px; font-weight: 300;
+    }
+    .material-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(125px, 155px)); gap: 12px;
+    }
+    .material-card {
+      width: 100%; height: 137px; padding: 5px; position: relative; overflow: hidden;
+      border: 1px solid #ddd; border-radius: 3px; background: #fafafa;
+      box-shadow: 0 1px 3px rgba(0,0,0,.18); text-align: left; cursor: pointer;
+    }
+    .material-card.selected { padding: 2px; border: 4px solid var(--accent); }
+    .material-card.selected::before {
+      content: ""; position: absolute; right: 0; top: 0; z-index: 2;
+      width: 29px; height: 29px; background: var(--accent);
+      clip-path: polygon(0 0, 100% 0, 100% 100%);
+    }
+    .material-card.selected::after {
+      content: "✓"; position: absolute; right: 2px; top: -5px; z-index: 3;
+      color: white; font-size: 21px; font-weight: 800;
+    }
+    .material-card svg { width: 100%; height: 101px; }
+    .material-name {
+      position: absolute; left: 7px; bottom: 8px; max-width: 140px;
+      color: #333; font-size: 12px; font-weight: 750; line-height: 1.1;
+    }
+
+    /* ===== Options panel ===== */
+    .options-content { padding-bottom: 90px; }
+    .option-section { margin-bottom: 18px; }
+    .option-section h3 { margin: 0 0 7px; color: #59595e; font-size: 18px; font-weight: 450; }
+    .option-note { margin: -2px 0 8px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .option-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 7px; }
+    .option-button {
+      min-height: 46px; padding: 7px 11px; position: relative;
+      border: 1px solid #aaa; color: white;
+      background: var(--option-color, var(--primary));
+      text-align: left; font-size: 13px; font-weight: 700; line-height: 1.15;
+    }
+    .option-button.selected { outline: 4px solid var(--accent); outline-offset: -4px; }
+    .option-button.selected::after {
+      content: "✓"; position: absolute; right: 7px; top: 3px; font-size: 19px; font-weight: 800;
+    }
+    .option-input-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .shape-grid { display: grid; grid-template-columns: repeat(3, minmax(125px, 1fr)); gap: 9px; }
+    .shape-card {
+      min-height: 132px; padding: 8px; border: 2px solid var(--border); border-radius: 3px;
+      background: white; color: var(--primary); font-size: 12px; font-weight: 700; text-align: center;
+    }
+    .shape-card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px #ffd2bf; }
+    .shape-card svg { width: 100%; height: 88px; margin-bottom: 5px; }
+
+    .config-actions {
+      position: sticky; bottom: 0; z-index: 8; padding: 13px 0 2px;
+      display: flex; justify-content: flex-end; gap: 28px;
+      background: linear-gradient(to bottom, rgba(250,250,250,0), rgba(250,250,250,.97) 25%);
+    }
+    .config-action { width: 160px; height: 60px; border-radius: 3px; font-size: 18px; font-weight: 700; }
+    .config-clear { border: 1px solid #aca4bd; color: #a39bb4; background: white; }
+    .config-ok { border: 1px solid var(--primary); color: white; background: var(--primary); box-shadow: 0 2px 5px rgba(0,0,0,.2); }
+
+    /* ===== Right prescription panel ===== */
+    .action-list { margin-bottom: 17px; }
+    .action-item {
+      min-height: 60px; padding: 0 11px;
+      display: flex; align-items: center; gap: 16px;
+      border-bottom: 1px solid #bbb; color: #888;
+      background: transparent; cursor: pointer;
+    }
+    .action-item.active { color: #444; background: #e2e8f0; border-bottom-color: transparent; }
+    .action-item.disabled { color: #bbb; cursor: not-allowed; }
+    .action-icon { width: 38px; height: 38px; display: grid; place-items: center; flex: 0 0 auto; }
+    .action-icon svg { width: 34px; height: 34px; }
+    .action-primary { color: #2e6fbd; }
+    .action-yellow { color: #d4a020; }
+    .action-lilac { color: #9b9ab4; }
+    .action-green { color: #60b060; }
+    .action-blue { color: #5577cc; }
+
+    .prescription-summary {
+      margin-top: 13px; padding: 14px; border: 1px solid #ddd;
+      background: white; box-shadow: 0 1px 4px rgba(0,0,0,.10);
+    }
+    .prescription-summary h3 { margin: 0 0 12px; color: var(--primary); font-size: 17px; }
+    .empty-prescription { padding: 13px 0; color: var(--muted); font-size: 12px; line-height: 1.45; }
+
+    .rx-item { padding: 10px 0; border-bottom: 1px solid #e1e1e1; }
+    .rx-item:last-child { border-bottom: 0; }
+    .rx-head { display: grid; grid-template-columns: 10px 1fr auto; gap: 8px; align-items: start; }
+    .rx-color { width: 10px; height: 37px; border-radius: 2px; }
+    .rx-copy strong, .rx-copy small { display: block; }
+    .rx-copy strong { font-size: 13px; }
+    .rx-copy small { margin-top: 3px; color: var(--muted); font-size: 11px; line-height: 1.35; }
+    .rx-actions { display: flex; gap: 3px; }
+    .rx-action { width: 25px; height: 25px; padding: 3px; border: 0; background: transparent; color: var(--primary); }
+    .rx-action.delete { color: var(--red); }
+    .rx-action svg { width: 17px; height: 17px; }
+
+    .service-box { margin-top: 13px; padding-top: 12px; border-top: 1px solid #ccc; }
+    .service-box label { display: block; margin: 0 0 5px; color: #555; font-size: 12px; font-weight: 700; }
+    .service-box select {
+      width: 100%; height: 36px; margin-bottom: 9px; border: 1px solid #888;
+      background: white; padding: 0 8px;
+    }
+    .price-lines { margin-top: 10px; }
+    .price-line {
+      padding: 4px 0; display: flex; justify-content: space-between;
+      gap: 8px; color: #555; font-size: 12px;
+    }
+    .price-line.total {
+      margin-top: 6px; padding-top: 9px; border-top: 2px solid #ddd;
+      color: var(--primary); font-size: 17px; font-weight: 800;
+    }
+
+    /* ===== Modals ===== */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 100;
+      display: grid; place-items: center; padding: 24px;
+      background: rgba(15,35,60,0.55);
+    }
+    .modal {
+      width: min(960px, 96vw); max-height: 91vh; overflow-y: auto;
+      border-radius: 6px; background: white;
+      box-shadow: 0 18px 60px rgba(0,0,0,.30);
+    }
+    .modal.small { width: min(650px, 95vw); }
+    .modal-header {
+      min-height: 68px; padding: 0 21px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-header h2 { margin: 0; color: var(--primary); font-size: 27px; font-weight: 400; }
+    .modal-close { width: 35px; height: 35px; border: 0; color: #777; background: transparent; font-size: 27px; }
+    .modal-body { padding: 21px; }
+    .modal-footer {
+      min-height: 72px; padding: 13px 21px;
+      display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+      border-top: 1px solid var(--border); background: #fafafa;
+    }
+    .modal-note {
+      margin-bottom: 15px; padding: 11px 13px;
+      color: #65501e; background: #fff8dc; border: 1px solid #ecd795; border-radius: 4px;
+      font-size: 13px; line-height: 1.45;
+    }
+    .upload-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .upload-card {
+      min-height: 142px; padding: 14px;
+      display: flex; flex-direction: column; justify-content: space-between;
+      border: 2px dashed #c5c5cb; border-radius: 5px; background: #fbfbfc;
+    }
+    .upload-card.complete { border-style: solid; border-color: var(--green); background: #edf9f4; }
+    .upload-card h4 { margin: 0 0 5px; color: var(--primary); font-size: 15px; }
+    .upload-card p { margin: 0; color: var(--muted); font-size: 11px; }
+    .upload-status { float: right; color: var(--red); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+    .upload-status.optional { color: var(--muted); }
+    .upload-file-list { margin: 9px 0 0; color: var(--green); font-size: 11px; line-height: 1.4; }
+    .file-input { display: none; }
+    .upload-label {
+      min-height: 35px; margin-top: 10px;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      border: 1px solid var(--primary); border-radius: 3px;
+      color: var(--primary); background: white; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .upload-label svg { width: 18px; height: 18px; }
+
+    .courier-modal-notice {
+      padding: 24px; text-align: center;
+    }
+    .courier-modal-notice h3 { color: var(--primary); margin-bottom: 12px; }
+    .courier-modal-notice p { color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+    .courier-address {
+      display: inline-block; padding: 14px 20px; margin: 12px 0;
+      background: var(--primary-soft); border: 1px solid #9dc3e6;
+      border-radius: 4px; font-size: 14px; font-weight: 700; color: var(--primary);
+      line-height: 1.7; text-align: left;
+    }
+
+    .review-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; }
+    .review-section { margin-bottom: 16px; padding: 16px; border: 1px solid var(--border); border-radius: 4px; }
+    .review-section h3 { margin: 0 0 12px; color: var(--primary); font-size: 18px; }
+    .review-item { padding: 11px 0; border-bottom: 1px solid #e3e3e5; }
+    .review-item:last-child { border-bottom: 0; }
+    .review-item strong, .review-item small { display: block; }
+    .review-item small { margin-top: 4px; color: var(--muted); }
+    .review-summary { padding: 16px; border: 1px solid var(--border); border-radius: 4px; background: #fafafa; }
+
+    .payment-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+    .payment-method {
+      min-height: 67px; border: 2px solid var(--border);
+      color: var(--primary); background: white; font-weight: 750;
+    }
+    .payment-method.selected { border-color: var(--primary); background: var(--primary-soft); }
+
+    .load-list { display: grid; gap: 10px; }
+    .load-item {
+      padding: 14px; display: grid; grid-template-columns: 1fr auto;
+      align-items: center; gap: 15px;
+      border: 1px solid var(--border); border-radius: 4px;
+    }
+    .load-item strong, .load-item small { display: block; }
+    .load-item small { margin-top: 4px; color: var(--muted); }
+
+    .success-view { padding: 30px; text-align: center; }
+    .success-icon {
+      width: 80px; height: 80px; margin: 0 auto 17px;
+      display: grid; place-items: center; border-radius: 50%;
+      color: white; background: var(--green);
+    }
+    .success-icon svg { width: 42px; height: 42px; }
+    .success-view h2 { color: var(--primary); font-weight: 400; }
+    .success-view p { color: var(--muted); line-height: 1.55; }
+
+    /* ===== Toast ===== */
+    .toast {
+      min-width: 300px; max-width: 650px; padding: 13px 19px;
+      position: fixed; left: 50%; bottom: 28px; z-index: 200;
+      border-radius: 4px; color: white; background: var(--primary-dark);
+      box-shadow: 0 8px 25px rgba(0,0,0,.25); text-align: center;
+      opacity: 0; pointer-events: none;
+      transform: translate(-50%, 100px); transition: 0.25s ease;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 1350px) {
+      .page-title, .center-title, .right-title { font-size: 32px; }
+      .product-button { font-size: 11px; }
+      .chart-legend { font-size: 17px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header id="topbar" class="topbar">
+      <div id="headerLeft" class="header-left"></div>
+      <div id="headerCenter" class="header-center"></div>
+      <div id="headerRight" class="header-right"></div>
+    </header>
+    <main id="workbench" class="workbench">
+      <aside id="leftPanel" class="left-panel"></aside>
+      <section id="centerPanel" class="center-panel"></section>
+      <aside id="rightPanel" class="right-panel"></aside>
+    </main>
+  </div>
+  <div id="modalRoot"></div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    /* =========================================================
+       Icons
+    ========================================================= */
+    function icon(name) {
+      const icons = {
+        new: `<path d="M5 3h12l6 6v16H5z"/><path d="M17 3v7h6M10 16h8M14 12v8"/>`,
+        folder: `<path d="M3 7h8l3 3h11v13H3z"/><path d="M3 7V4h8l3 3"/>`,
+        save: `<path d="M4 3h18l3 3v19H4z"/><path d="M8 3v8h11V3M8 25v-9h13v9"/>`,
+        back: `<path d="M22 5 10 14l12 9"/><path d="M10 14h17"/>`,
+        settings: `<circle cx="14" cy="14" r="4"/><path d="M14 2v4M14 22v4M2 14h4M22 14h4M5.5 5.5l3 3M19.5 19.5l3 3M22.5 5.5l-3 3M8.5 19.5l-3 3"/>`,
+        help: `<circle cx="14" cy="14" r="11"/><path d="M11 10a3.3 3.3 0 1 1 4.7 3c-1.2.6-1.7 1.5-1.7 3M14 21v.2"/>`,
+        bell: `<path d="M8 20h12l-2-3V11a4 4 0 0 0-8 0v6z"/><path d="M12 23h4"/>`,
+        calendar: `<rect x="4" y="6" width="20" height="18" rx="2"/><path d="M8 3v6M20 3v6M4 11h20"/>`,
+        note: `<rect x="5" y="3" width="18" height="22" rx="2"/><path d="M9 8h10M9 13h10M9 18h7"/>`,
+        expand: `<path d="M5 11V5h6M23 17v6h-6M5 5l7 7M23 23l-7-7"/>`,
+        cube: `<path d="m14 3 10 5.5v11L14 25 4 19.5v-11z"/><path d="m4 8.5 10 5.5 10-5.5M14 14v11"/>`,
+        image: `<rect x="4" y="5" width="20" height="18" rx="2"/><circle cx="10" cy="11" r="2"/><path d="m6 20 5-5 4 4 3-3 4 4"/>`,
+        tooth: `<path d="M7 3c3 1.3 4 3 7 3s4-1.7 7-3c4-1.7 7 1.4 6.5 6.4-.4 4.2-2.7 6-3.7 10.8C23 24 22 27 19.5 27c-2.6 0-2-6-5.5-6s-3 6-5.5 6C6 27 5 24 4.2 20.2 3.2 15.4.9 13.6.5 9.4 0 4.4 3 1.3 7 3z"/>`,
+        target: `<circle cx="14" cy="14" r="10"/><circle cx="14" cy="14" r="5"/><path d="M14 1v5M14 22v5M1 14h5M22 14h5"/>`,
+        upload: `<path d="M14 19V3M8 9l6-6 6 6"/><path d="M4 18v7h20v-7"/>`,
+        check: `<path d="m4 14 6 6L24 7"/>`,
+        edit: `<path d="m5 22 1-6L19 3l5 5-13 13z"/><path d="m17 5 5 5"/>`,
+        trash: `<path d="M5 7h18M10 7V4h8v3M8 7l1 18h10l1-18"/>`,
+        info: `<circle cx="14" cy="14" r="11"/><path d="M14 12v8M14 8v.2"/>`,
+        file: `<path d="M6 3h12l5 5v17H6z"/><path d="M18 3v6h5M10 14h8M10 18h8"/>`,
+        review: `<rect x="4" y="4" width="20" height="20" rx="2"/><path d="m8 14 4 4 8-9"/>`,
+        manufacture: `<path d="M3 24h22V12l-7 4v-4l-7 4V8H3z"/><path d="M7 24v-5h5v5"/>`,
+        design: `<path d="M5 23 8 6l6-3 6 3 3 17"/><path d="M9 13c4-2 7-2 11 0M10 18c3-2 6-2 9 0"/>`,
+        card: `<rect x="3" y="6" width="22" height="16" rx="2"/><path d="M3 11h22M7 17h6"/>`,
+        download: `<path d="M14 3v15M8 12l6 6 6-6"/><path d="M4 23h20"/>`,
+        truck: `<path d="M1 3h16v13H1zM17 8h5l3 4v4h-8z"/><circle cx="6" cy="19" r="2"/><circle cx="21" cy="19" r="2"/>`,
+      };
+      return `<svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name] || icons.tooth}</svg>`;
+    }
+
+    function productIcon() {
+      return `<svg viewBox="0 0 52 40" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6c6 2 7-4 13-4 5 0 6 5 10 5 4 0 5-5 10-5 7 1 7 10 5 17-2 9-6 16-13 16-4 0-5-3-8-3s-4 3-8 3C9 35 6 28 5 19 4 12 3 7 8 6z"/><path d="M13 23c5-6 8 4 12-1 4 5 8-5 13 1"/></svg>`;
+    }
+
+    /* =========================================================
+       Logged-in user (autofill)
+    ========================================================= */
+    const LOGGED_IN_CLIENT = "Bright Smile Dental";
+
+    /* =========================================================
+       Master data
+    ========================================================= */
+    const SHADES = ["A1","A2","A3","A3.5","A4","B1","B2","B3","B4","C1","C2","C3","C4","D2","D3","D4"];
+
+    const UPPER_TEETH = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
+    const LOWER_TEETH = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
+
+    const PRODUCT_GROUPS = [
+      { title: "Crown and Bridge", items: ["crown","implantCrown","pontic"] },
+      { title: "Inlays, Onlays and Veneers", items: ["inlay","onlay","veneer"] },
+      { title: "Full Arch and Implant Retained", items: ["allOnX","fullDenture","biteplane"] },
+      { title: "Partial Dentures", items: ["castPartial","acrylicPartial"] },
+      { title: "Diagnostics", items: ["diagnosticWaxup","simpleGuide","partialGuide","fullGuide"] },
+      { title: "Residual Dentition", items: ["adjacent","missing","antagonist"] }
+    ];
+
+    const PRODUCTS = {
+      crown: { label: "Crown / Retainer", color: "#aa00b8", flow: "crown", mode: "teeth", quantity: "teeth", protocol: "crown", price: 35 },
+      implantCrown: { label: "Implant Crown", color: "#c31d4c", flow: "implant", mode: "teeth", quantity: "teeth", protocol: "crown", price: 48 },
+      pontic: { label: "Pontic", color: "#84001e", flow: "crown", mode: "teeth", quantity: "teeth", protocol: "crown", price: 31 },
+      inlay: { label: "Inlay", color: "#2e6513", flow: "restorative", mode: "teeth", quantity: "teeth", protocol: "crown", price: 28 },
+      onlay: { label: "Onlay", color: "#155ec4", flow: "restorative", mode: "teeth", quantity: "teeth", protocol: "crown", price: 29 },
+      veneer: { label: "Veneer", color: "#2d91a4", flow: "restorative", mode: "teeth", quantity: "teeth", protocol: "crown", price: 32 },
+      allOnX: { label: "All on X", color: "#397d70", flow: "implant", mode: "arch", quantity: "one", protocol: "crown", price: 285 },
+      biteplane: { label: "Bite Splint", color: "#485a80", flow: "biteplane", mode: "arch", quantity: "one", protocol: "biteplane", price: 79 },
+      fullDenture: { label: "Full Denture", color: "#61b9c4", flow: "denture", mode: "arch", quantity: "one", protocol: "denture", price: 175 },
+      castPartial: { label: "Cast Partial Denture", color: "#b8a373", flow: "partial", mode: "partial", quantity: "one", protocol: "partial", price: 145 },
+      acrylicPartial: { label: "Acrylic Partial Denture", color: "#b66d67", flow: "partial", mode: "partial", quantity: "one", protocol: "partial", price: 115 },
+      diagnosticWaxup: { label: "Diagnostic Waxup", color: "#21c287", flow: "restorative", mode: "teeth", quantity: "teeth", protocol: "crown", price: 22 },
+      simpleGuide: { label: "Simple Surgical Guide", color: "#21a0c2", flow: "restorative", mode: "arch", quantity: "one", protocol: "crown", price: 55 },
+      partialGuide: { label: "Partially Guided Surgical Guide", color: "#0e7a8c", flow: "restorative", mode: "arch", quantity: "one", protocol: "crown", price: 85 },
+      fullGuide: { label: "Fully Guided Surgical Guide", color: "#05556b", flow: "restorative", mode: "arch", quantity: "one", protocol: "crown", price: 120 },
+      adjacent: { label: "Adjacent Tooth", color: "#ffae1a", flow: "marker", mode: "teeth", quantity: "teeth", protocol: null, price: 0 },
+      missing: { label: "Missing Tooth", color: "#ef343f", flow: "marker", mode: "teeth", quantity: "teeth", protocol: null, price: 0 },
+      antagonist: { label: "Antagonist", color: "#f36800", flow: "marker", mode: "teeth", quantity: "teeth", protocol: null, price: 0 }
+    };
+
+    /* Materials isolated per group */
+    const MATERIALS_BY_GROUP = {
+      "Crown and Bridge": ["PFM","Zirconia","Lithium Disilicate","PMMA"],
+      "Inlays, Onlays and Veneers": ["Emax","Treated Zirconia"],
+      "Full Arch and Implant Retained": ["Milled Acrylic/PMMA","High Impact Printed","Acrylic over CrCo Frame","Zirconia on Ti Abutments","Acrylic Wrapped Ti Bar","Zirconia over Ti Bar","Acrylic over Ti Bar"],
+      "Partial Dentures": ["Acrylic/PMMA","CrCo Frame","Titanium Frame"],
+      "Diagnostics": ["Printed Clear","Milled PMMA"],
+      "Residual Dentition": []
+    };
+
+    /* Material visual colours */
+    const MATERIAL_COLORS = {
+      "PFM": ["#b0b8b0","#e0e8e0"],
+      "Zirconia": ["#e6e9e9","#f6f6f6"],
+      "Lithium Disilicate": ["#e8dfd0","#f5f0e8"],
+      "PMMA": ["#e8d3a6","#bfc9d9"],
+      "Emax": ["#f0ece0","#fffdf5"],
+      "Treated Zirconia": ["#d8dfe0","#eef2f1"],
+      "Milled Acrylic/PMMA": ["#eadab4","#d4b57e"],
+      "High Impact Printed": ["#d6b889","#f0dfc7"],
+      "Acrylic over CrCo Frame": ["#c8b890","#a89470"],
+      "Zirconia on Ti Abutments": ["#9092a4","#dadbe3"],
+      "Acrylic Wrapped Ti Bar": ["#a5a8b8","#d5d8e5"],
+      "Zirconia over Ti Bar": ["#e0e4e8","#f0f4f8"],
+      "Acrylic over Ti Bar": ["#c8cad4","#e4e6ee"],
+      "Acrylic/PMMA": ["#e8d3a6","#bfc9d9"],
+      "CrCo Frame": ["#999aa7","#dedee1"],
+      "Titanium Frame": ["#8890a0","#d0d4dc"],
+      "Printed Clear": ["#e8f4f8","#c8e4f0"],
+      "Milled PMMA": ["#ead8b4","#d6b57e"],
+    };
+
+    const PROTOCOLS = {
+      crown: [
+        { id:"upperArch", label:"Upper Arch", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" },
+        { id:"lowerArch", label:"Lower Arch", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" },
+        { id:"biteScan", label:"Bite Scan", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" },
+        { id:"studyModel", label:"Study Model Scan", required:false, accept:".stl,.obj,.ply" },
+        { id:"frontSmile", label:"Front Smile Photo", required:false, accept:"image/*" },
+        { id:"leftSmile", label:"Left Smile Photo", required:false, accept:"image/*" },
+        { id:"rightSmile", label:"Right Smile Photo", required:false, accept:"image/*" },
+        { id:"frontRetracted", label:"Front Retracted Photo", required:false, accept:"image/*" },
+        { id:"faceScan", label:"Face Scan", required:false, accept:".stl,.obj,.ply,.zip" }
+      ],
+      denture: [
+        { id:"upperArch", label:"Upper Arch", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" },
+        { id:"lowerArch", label:"Lower Arch", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" },
+        { id:"biteScan", label:"Bite Scan", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" },
+        { id:"preOpScan", label:"Pre-Op Scan", required:false, accept:".stl,.obj,.ply" },
+        { id:"frontSmile", label:"Front Smile Photo", required:false, accept:"image/*" },
+        { id:"leftSmile", label:"Left Smile Photo", required:false, accept:"image/*" },
+        { id:"rightSmile", label:"Right Smile Photo", required:false, accept:"image/*" },
+        { id:"frontRetracted", label:"Front Retracted Photo", required:false, accept:"image/*" },
+        { id:"faceScanRetractors", label:"Face Scan With Retractors", required:false, accept:".stl,.obj,.ply,.zip" },
+        { id:"faceScanNoRetractors", label:"Face Scan Without Retractors", required:false, accept:".stl,.obj,.ply,.zip" }
+      ],
+      biteplane: [
+        { id:"upperArch", label:"Upper Arch", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" },
+        { id:"lowerArch", label:"Lower Arch", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" },
+        { id:"biteScan", label:"Bite Scan", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" }
+      ],
+      partial: [
+        { id:"upperArch", label:"Upper Arch", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" },
+        { id:"lowerArch", label:"Lower Arch", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" },
+        { id:"biteScan", label:"Bite Scan", required:true, accept:".stl,.obj,.ply,.dcm,.dicom" },
+        { id:"partialPrescription", label:"Partial Design / Prescription", required:false, accept:".pdf,image/*" }
+      ]
+    };
+
+    /* =========================================================
+       Reference auto-generation
+    ========================================================= */
+    const REFERENCE_PREFIXES = {
+      crown:"SB", implantCrown:"SB", pontic:"SB",
+      inlay:"SG", onlay:"SG", veneer:"SG",
+      allOnX:"SW", fullDenture:"SW", biteplane:"SW",
+      castPartial:"SK", acrylicPartial:"SK",
+      diagnosticWaxup:"SC", simpleGuide:"SC", partialGuide:"SC", fullGuide:"SC"
+    };
+
+    function generateReference() {
+      const firstItem = state.case.items.find(item => PRODUCTS[item.productKey].flow !== "marker");
+      const prefix = firstItem ? (REFERENCE_PREFIXES[firstItem.productKey] || "SC") : "SC";
+      const key = "sbRefCounter_" + prefix;
+      let counter = parseInt(localStorage.getItem(key) || "0") + 1;
+      if (counter > 300) counter = 1;
+      localStorage.setItem(key, String(counter));
+      return prefix + counter;
+    }
+
+    /* =========================================================
+       State
+    ========================================================= */
+    function newCaseData() {
+      return {
+        id: "",
+        client: LOGGED_IN_CLIENT,
+        reference: "",
+        patientName: "",
+        dueDate: "",
+        notes: "",
+        shade: "A2",
+        impressionType: "Intra Oral Scan",
+        service: "design",
+        manufactureMethod: "mill",
+        output: "appliance",
+        modelService: "none",
+        items: [],
+        uploads: {},
+        payment: { method:"card", name:"", card:"", expiry:"", cvv:"", paypalEmail:"", terms:false },
+        status: "New",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+    }
+
+    const state = {
+      screen: "project",
+      case: newCaseData(),
+      currentTooth: 14,
+      workingTeeth: [],
+      selectedArch: "",
+      multiSelect: false,
+      activeProductKey: null,
+      selectedMaterial: null,
+      workingConfig: {},
+      editingItemId: null
+    };
+
+    /* =========================================================
+       Helpers
+    ========================================================= */
+    function escapeHtml(v="") {
+      return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+    }
+    function clone(v) { return JSON.parse(JSON.stringify(v)); }
+    function money(v) { return new Intl.NumberFormat("en-AU",{style:"currency",currency:"AUD"}).format(Number(v||0)); }
+    function currentDateText() {
+      return new Date().toLocaleString([],{year:"numeric",month:"2-digit",day:"2-digit",hour:"numeric",minute:"2-digit"});
+    }
+    function showToast(msg) {
+      const t=document.getElementById("toast");
+      t.textContent=msg; t.classList.add("show");
+      clearTimeout(window._toastTimer);
+      window._toastTimer=setTimeout(()=>t.classList.remove("show"),2800);
+    }
+    function createCaseId() { return "CASE-"+new Date().getFullYear()+"-"+Math.floor(10000+Math.random()*90000); }
+    function storedCases() { return JSON.parse(localStorage.getItem("sbDentalCases")||"[]"); }
+    function persistCases(cases) { localStorage.setItem("sbDentalCases",JSON.stringify(cases)); }
+    function selectedTeethText(teeth=state.workingTeeth) {
+      if (!teeth.length) return "No teeth selected";
+      if (state.selectedArch) return state.selectedArch;
+      return teeth.join(", ");
+    }
+    function primaryItems() { return state.case.items.filter(item=>PRODUCTS[item.productKey].flow!=="marker"); }
+
+    function getProductGroup(productKey) {
+      for (const g of PRODUCT_GROUPS) { if(g.items.includes(productKey)) return g.title; }
+      return null;
+    }
+
+    /* =========================================================
+       Default configs
+    ========================================================= */
+    function defaultConfig(productKey) {
+      const product = PRODUCTS[productKey];
+      if (product.flow==="crown") return { restorationRole: productKey==="pontic"?"Pontic":"Crown", contour:"Full Contour", crownType:"Crown", cervical:"Pull to Margin", scannedAnatomy:"No", additionalScan:"None", information:"" };
+      if (product.flow==="implant") return { restorationRole:"Crown", contour:"Full Contour", crownType:"Implant Crown", implantBrand:"Nobel Biocare", customImplantBrand:"", retention:"Cement Retained Custom Abutment", abutmentMaterial:"Custom Zirconia on Ti-Base", tiBaseType:"OEM", scanAbutmentInfo:"", platformSize:"", cervical:"Pull to Margin", information:"" };
+      if (product.flow==="denture") return { toothShape:"Round", toothLibrary:"Library 1", anteriorSetup:"Naturally Straight", posteriorSetup:"Lingualized Occlusion", postDam:"Butterfly", periphery:"In the depth of the sulcus", finishing:"Medium Root Effect", midline:"Follow Natural Markers", gingiva:"Medium Gingiva", information:"" };
+      if (product.flow==="biteplane") return { splintType:"Type A — Directional Splint", contactDepth:"0.1 mm", minimumThickness:"2 mm", guidance:"Medium", information:"" };
+      if (product.flow==="partial") return { partialType: productKey==="castPartial"?"Cast Partial Denture":"Acrylic Partial Denture", framework:"Standard Framework", clasp:"Akers Clasp", claspMaterial: productKey==="castPartial"?"CrCo":"Acrylic PMMA", support:"Tooth Supported", information:"" };
+      return { contour:"Full Contour", information:"" };
+    }
+
+    /* =========================================================
+       Header
+    ========================================================= */
+    function renderHeader() {
+      const isConfig = state.screen==="material";
+      const isCatalogue = state.screen==="catalog";
+      document.getElementById("topbar").className = `topbar ${isConfig?"config-header":""}`;
+
+      if (isConfig||isCatalogue) {
+        document.getElementById("headerLeft").innerHTML = `
+          <button class="back-button" onclick="goBack()" title="Back">${icon("back")}</button>
+          <div class="tooth-header">
+            <div class="page-title">${state.selectedArch?state.selectedArch:"Tooth "+state.currentTooth}</div>
+            <div class="header-subtitle">Configuration</div>
+          </div>`;
+        document.getElementById("headerCenter").innerHTML = `<div class="center-title">${isConfig?"Material":"Indication and Materials"}</div>`;
+        document.getElementById("headerRight").innerHTML = `
+          ${isConfig?`<div class="right-title">Options &amp; Parameters</div>`:`<div class="right-title">Prescription</div>`}
+          <button class="icon-button" title="Notifications">${icon("bell")}</button>
+          <button class="icon-button" title="Help" onclick="showHelp()">${icon("help")}</button>`;
+        return;
+      }
+
+      document.getElementById("headerLeft").innerHTML = `
+        <div class="page-title">New Case</div>
+        <div class="header-buttons">
+          <button class="header-button" onclick="newCase()">${icon("new")} New</button>
+          <button class="header-button" onclick="openLoadModal()">${icon("folder")} Load</button>
+          <button class="header-button" onclick="saveCase()">${icon("save")} Save</button>
+        </div>`;
+      document.getElementById("headerCenter").innerHTML = `<div class="center-title">Indication and Materials</div>`;
+      document.getElementById("headerRight").innerHTML = `
+        <div class="right-title">Prescription</div>
+        <button class="icon-button" title="Settings">${icon("settings")}</button>
+        <button class="icon-button" title="Notifications">${icon("bell")}</button>
+        <button class="icon-button" title="Help" onclick="showHelp()">${icon("help")}</button>`;
+    }
+
+    /* =========================================================
+       Project panel
+    ========================================================= */
+    function projectHelpText() {
+      if (!state.case.patientName.trim()) return "Step 1: Enter the patient name and due date.";
+      if (!state.case.items.length) return "Step 2: Click a tooth in the dental chart to create a prescription.";
+      if (!state.case.id) return "Step 3: Review the prescription and click Save to proceed.";
+      return "Case saved. Upload digital files, review the order and submit.";
+    }
+
+    function renderProjectPanel() {
+      return `
+        <div class="flow-help">${icon("info")} ${projectHelpText()}</div>
+        <section class="panel-card">
+          <div class="project-date-row">
+            ${icon("calendar")} <span>${currentDateText()}</span>
+            <span class="due-label">Due</span>
+          </div>
+          <div class="project-form">
+            <div class="project-form-full" style="margin-bottom:22px">
+              <div class="floating-field">
+                <label>Client</label>
+                <input type="text" value="${escapeHtml(state.case.client)}" disabled />
+              </div>
+            </div>
+            <div class="project-form-grid">
+              <div class="floating-field">
+                <label>Patient Name <span class="required">*</span></label>
+                <input type="text" value="${escapeHtml(state.case.patientName)}"
+                       placeholder="Required"
+                       oninput="state.case.patientName=this.value" />
+              </div>
+              <div class="floating-field">
+                <label>Due Date <span class="required">*</span></label>
+                <input type="date" value="${escapeHtml(state.case.dueDate)}"
+                       oninput="state.case.dueDate=this.value" />
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="panel-card">
+          <div class="notes-head">${icon("note")} Notes <span class="expand-icon">${icon("expand")}</span></div>
+          <div class="notes-body">
+            <textarea placeholder="Type notes here..." oninput="state.case.notes=this.value">${escapeHtml(state.case.notes)}</textarea>
+          </div>
+        </section>
+        <section class="panel-card">
+          <div class="preview-tabs">
+            <div class="preview-tab active">${icon("cube")} 3D PREVIEW</div>
+            <div class="preview-tab">${icon("image")} IMAGES/DOCUMENTS</div>
+          </div>
+          <div class="preview-body">
+            ${state.case.id?`<strong>${escapeHtml(state.case.id)}</strong> · ${escapeHtml(state.case.status)}`:"Project not yet saved"}
+          </div>
+        </section>`;
+    }
+
+    /* =========================================================
+       Dental chart – improved tooth positions
+    ========================================================= */
+    const TOP_POSITIONS = [
+      [18, 80, 370, 1.07],
+      [17, 83, 302, 1.06],
+      [16, 92, 237, 1.06],
+      [15, 108, 179, 0.98],
+      [14, 130, 132, 0.91],
+      [13, 162, 95, 0.88],
+      [12, 200, 70, 0.79],
+      [11, 243, 58, 0.73],
+      [21, 295, 58, 0.73],
+      [22, 338, 70, 0.79],
+      [23, 376, 95, 0.88],
+      [24, 408, 132, 0.91],
+      [25, 430, 179, 0.98],
+      [26, 446, 237, 1.06],
+      [27, 455, 302, 1.06],
+      [28, 458, 370, 1.07]
+    ];
+
+    const BOTTOM_POSITIONS = [
+      [48, 80, 455, 1.07],
+      [47, 83, 523, 1.06],
+      [46, 92, 588, 1.06],
+      [45, 108, 644, 0.98],
+      [44, 130, 693, 0.91],
+      [43, 162, 728, 0.88],
+      [42, 200, 750, 0.79],
+      [41, 243, 759, 0.73],
+      [31, 295, 759, 0.73],
+      [32, 338, 750, 0.79],
+      [33, 376, 728, 0.88],
+      [34, 408, 693, 0.91],
+      [35, 430, 644, 0.98],
+      [36, 446, 588, 1.06],
+      [37, 455, 523, 1.06],
+      [38, 458, 455, 1.07]
+    ];
+
+    function toothAppearance(number) {
+      if (state.screen!=="project" && state.workingTeeth.includes(number)) return {fill:"#ff1717",text:"#ffffff"};
+      const matchingItem=[...state.case.items].reverse().find(item=>item.teeth.includes(number));
+      if (matchingItem) return {fill:PRODUCTS[matchingItem.productKey].color,text:"#ffffff"};
+      return {fill:"#d4d4d6",text:"#111111"};
+    }
+
+    function toothSvg(number,x,y,scale) {
+      const ap=toothAppearance(number);
+      return `
+        <g class="tooth" style="--tooth-fill:${ap.fill};--tooth-text:${ap.text}"
+           transform="translate(${x},${y}) scale(${scale})"
+           onclick="toothClick(${number},event)" role="button" tabindex="0">
+          <path class="tooth-body" d="M0,-30 C-15,-30 -25,-18 -25,1 C-25,17 -17,29 -7,31 C-3,31 -2,27 0,27 C2,27 3,31 7,31 C17,29 25,17 25,1 C25,-18 15,-30 0,-30Z"/>
+          <path class="tooth-groove" d="M-10,-14 C-14,-7 -11,-3 -7,1 M10,-14 C14,-7 11,-3 7,1 M-10,10 C-7,6 -4,7 0,10 M10,10 C7,6 4,7 0,10 M0,-17 L0,-4 M0,10 L0,20"/>
+          <text x="0" y="1">${number}</text>
+        </g>`;
+    }
+
+    function renderDentalChart() {
+      return `
+        <svg class="dental-chart" viewBox="20 30 500 760" aria-label="Interactive dental chart">
+          ${TOP_POSITIONS.map(item=>toothSvg(...item)).join("")}
+          ${BOTTOM_POSITIONS.map(item=>toothSvg(...item)).join("")}
+        </svg>`;
+    }
+
+    function renderChartLegend() {
+      const keys=[];
+      state.case.items.forEach(item=>{if(!keys.includes(item.productKey))keys.push(item.productKey);});
+      if (!keys.length) return "";
+      return `
+        <div class="chart-legend">
+          ${keys.map(key=>`
+            <div class="legend-row">
+              <span class="legend-color" style="background:${PRODUCTS[key].color}"></span>
+              <span>${PRODUCTS[key].label}</span>
+            </div>`).join("")}
+        </div>`;
+    }
+
+    function renderChartPanel() {
+      const configurationScreen = state.screen==="catalog"||state.screen==="material";
+      return `
+        <section class="chart-area">
+          <div class="chart-toolbar">
+            ${configurationScreen?`
+              <span>Patient</span>
+              <button class="toggle ${state.multiSelect?"on":""}" onclick="toggleMultiSelect()" title="Multi-select"></button>
+              <span>Multi-select</span>
+            `:`<span>Click any tooth to start a new prescription</span>`}
+          </div>
+          <div class="chart-with-options">
+            <div class="chart-svg-wrap">
+              ${renderDentalChart()}
+              ${renderChartLegend()}
+            </div>
+            ${state.screen==="project"?`
+              <div class="chart-side-options">
+                <label class="side-option-label">Tooth Shade</label>
+                <select class="side-option-select" onchange="setCaseShade(this.value)">
+                  ${SHADES.map(s=>`<option value="${s}" ${state.case.shade===s?"selected":""}>${s}</option>`).join("")}
+                </select>
+
+                <label class="side-option-label">Impression Type</label>
+                <select class="side-option-select" onchange="setImpressionType(this.value)">
+                  <option value="Traditional Impression" ${state.case.impressionType==="Traditional Impression"?"selected":""}>Traditional Impression</option>
+                  <option value="Intra Oral Scan" ${state.case.impressionType==="Intra Oral Scan"?"selected":""}>Intra Oral Scan</option>
+                  <option value="Bench top scan" ${state.case.impressionType==="Bench top scan"?"selected":""}>Bench top scan</option>
+                </select>
+
+                ${state.case.impressionType==="Traditional Impression"?`
+                  <div class="courier-notice">
+                    <strong>📦 Send via Courier</strong>
+                    Please send your physical impressions to our lab by courier service. No digital file upload is required.
+                    <br><br>
+                    <strong>Lab Address:</strong><br>
+                    SmileBright Dental Lab<br>
+                    Unit 4, 12 Industrial Drive<br>
+                    Sydney NSW 2000
+                  </div>
+                `:""}
+              </div>
+            `:""}
+          </div>
+        </section>`;
+    }
+
+    function setCaseShade(value) { state.case.shade=value; }
+    function setImpressionType(value) { state.case.impressionType=value; render(); }
+
+    /* =========================================================
+       Materials
+    ========================================================= */
+    function materialVisual(matName, index) {
+      const cols = MATERIAL_COLORS[matName] || ["#cccccc","#eeeeee"];
+      return `
+        <svg viewBox="0 0 130 100" aria-hidden="true">
+          <defs><clipPath id="mc-${index}"><circle cx="65" cy="50" r="46"></circle></clipPath></defs>
+          <circle cx="65" cy="50" r="46" fill="${cols[0]}"/>
+          <g clip-path="url(#mc-${index})">
+            <path d="M-5 84L-5 6 136 94 136 115Z" fill="${cols[1]}" opacity=".82"/>
+            <path d="M-10 90Q50 69 140 96V115H-10Z" fill="#fff" opacity=".34"/>
+          </g>
+          <circle cx="65" cy="50" r="46" fill="none" stroke="#d1d1d1" stroke-width="1.5"/>
+        </svg>`;
+    }
+
+    function renderMaterialPanel() {
+      const groupName = state.activeProductKey ? getProductGroup(state.activeProductKey) : null;
+      const materials = groupName ? (MATERIALS_BY_GROUP[groupName] || []) : [];
+      return `
+        <div class="screen-help">Choose a material for <strong>${state.activeProductKey?PRODUCTS[state.activeProductKey].label:"this product"}</strong>. Product options appear on the right.</div>
+        <div class="material-grid">
+          ${materials.map((matName,index)=>`
+            <button class="material-card ${state.selectedMaterial===matName?"selected":""}"
+                    onclick="selectMaterial('${encodeURIComponent(matName)}')">
+              ${materialVisual(matName,index)}
+              <span class="material-name">${matName}</span>
+            </button>`).join("")}
+          ${materials.length===0?`<div style="padding:20px;color:#999;font-size:13px">No material selection required for this product type.</div>`:""}
+        </div>`;
+    }
+
+    /* =========================================================
+       Product options
+    ========================================================= */
+    function optionGroup(title,field,options,colors=[],note="") {
+      const selected=state.workingConfig[field];
+      return `
+        <div class="option-section">
+          <h3>${title}</h3>
+          ${note?`<div class="option-note">${note}</div>`:""}
+          <div class="option-grid">
+            ${options.map((option,index)=>`
+              <button class="option-button ${selected===option?"selected":""}"
+                      style="--option-color:${colors[index]||["#bd1d49","#0a8730","#e45d00","#579fcf","#a9619e","#777465"][index%6]}"
+                      onclick="setWorkingOption('${field}','${encodeURIComponent(option)}')">${option}</button>`).join("")}
+          </div>
+        </div>`;
+    }
+
+    function optionTextField(label,field,placeholder="") {
+      return `<div class="field-group"><label>${label}</label><input class="input" type="text" value="${escapeHtml(state.workingConfig[field]||"")}" placeholder="${escapeHtml(placeholder)}" oninput="state.workingConfig['${field}']=this.value"/></div>`;
+    }
+    function optionTextArea(label,field,placeholder="") {
+      return `<div class="field-group"><label>${label}</label><textarea class="textarea" placeholder="${escapeHtml(placeholder)}" oninput="state.workingConfig['${field}']=this.value">${escapeHtml(state.workingConfig[field]||"")}</textarea></div>`;
+    }
+
+    function shapeSvg(type) {
+      const shapes={Round:`<rect x="34" y="13" width="32" height="60" rx="16"/>`,Square:`<rect x="31" y="13" width="38" height="60" rx="6"/>`,Oval:`<ellipse cx="50" cy="43" rx="21" ry="31"/>`, "Face Appropriate":`<path d="M28 19Q50 4 72 19L67 65Q50 81 33 65Z"/>`,"Age Appropriate Wear":`<path d="M31 22Q50 8 69 22L65 63Q50 74 35 63Z"/><path d="M34 23h32" stroke="#ef8b61" stroke-width="4"/>`};
+      return `<svg viewBox="0 0 100 88"><path d="M14 67Q50 85 86 67" fill="none" stroke="#e8b8ae" stroke-width="11" stroke-linecap="round"/><g fill="#f5f1e8" stroke="#857e73" stroke-width="2">${shapes[type]}</g><path d="M20 68Q50 80 80 68" fill="none" stroke="#bd6b74" stroke-width="3"/></svg>`;
+    }
+
+    function shapeOptions() {
+      const shapes=["Round","Square","Oval","Face Appropriate","Age Appropriate Wear"];
+      return `<div class="option-section"><h3>Tooth Shape</h3><div class="option-note">Select one of the visual tooth-shape libraries.</div><div class="shape-grid">${shapes.map(shape=>`<button class="shape-card ${state.workingConfig.toothShape===shape?"selected":""}" onclick="setWorkingOption('toothShape','${encodeURIComponent(shape)}')">${shapeSvg(shape)} ${shape}</button>`).join("")}</div></div>`;
+    }
+
+    function renderCrownOptions(product) {
+      const implant=product.flow==="implant"||state.workingConfig.crownType==="Implant Crown";
+      return `
+        ${optionGroup("Crown / Retainer / Pontic","restorationRole",["Crown","Retainer","Pontic"])}
+        ${optionGroup("Contour","contour",["Full Contour","Buccal Cutback","Full Cutback"])}
+        ${optionGroup("Restoration Type","crownType",["Crown","Implant Crown"])}
+        ${implant?`
+          ${optionGroup("Implant Brand / Type","implantBrand",["Nobel Biocare","Straumann","Southern Implants","Astra","3i","Custom"])}
+          ${state.workingConfig.implantBrand==="Custom"?optionTextField("Custom Implant Brand / Type","customImplantBrand","Enter custom implant system"):""}
+          ${optionGroup("Retention","retention",["Cement Retained Custom Abutment","Screw Retained Custom Abutment","Ti-Base"])}
+          ${state.workingConfig.retention&&state.workingConfig.retention.includes("Custom Abutment")?optionGroup("On Custom Abutment","abutmentMaterial",["Custom Zirconia on Ti-Base","Titanium"]):""}
+          ${state.workingConfig.retention==="Ti-Base"?optionGroup("Ti-Base","tiBaseType",["OEM","Generic"]):""}
+          <div class="option-input-grid">${optionTextField("Scan Abutment Information","scanAbutmentInfo","Scan body / abutment details")}${optionTextField("Platform Size","platformSize","e.g. 4.1 mm")}</div>
+        `:""}
+        ${optionGroup("Cervical Adaption","cervical",["Pull to Margin","Preserve Tooth Library Shape"])}
+        ${optionTextArea("Additional Information","information","Add crown-specific instructions...")}`;
+    }
+
+    function renderRestorativeOptions() {
+      return `${optionGroup("Contour","contour",["Full Contour","Buccal Cutback","Full Cutback"])}${optionTextArea("Additional Information","information","Add restorative instructions...")}`;
+    }
+
+    function renderDentureOptions() {
+      return `${shapeOptions()}${optionGroup("Visual Library","toothLibrary",["Library 1","Library 2","Library 3"],[],"")}${optionGroup("Anterior Setup","anteriorSetup",["Straight Hollywood","Naturally Straight","Naturally Rotated Laterals","Naturally Rotated Centrals","Face and Age Appropriate"])}${optionGroup("Posterior Setup","posteriorSetup",["Lingualized Occlusion","Flat Occlusion","Medium Angled Occlusion","Sharply Angled Occlusion"])}${optionGroup("Post Dam","postDam",["Straight","Butterfly"])}${optionGroup("Periphery","periphery",["In the depth of the sulcus","1 mm short from sulcus","2 mm short from sulcus","3 mm short from sulcus"])}${optionGroup("Finishing","finishing",["No Root Effect","Medium Root Effect","Heavy Root Effect"])}${optionGroup("Midline","midline",["Follow Natural Markers","Follow Midline on Biteblock","Use Photographs or Face Scan"])}${optionGroup("Gingiva","gingiva",["Idealize Gingiva","Soft Gingiva","Medium Gingiva","Heavy Gingiva"])}${optionTextArea("Additional Information","information","Add denture-specific instructions...")}`;
+    }
+
+    function renderBiteplaneOptions() {
+      const type=state.workingConfig.splintType;
+      return `${optionGroup("Biteplane Type","splintType",["Type A — Directional Splint","Type B — Stabilization / Tanner / Michigan","Type C — B-Splint"])}${type==="Type A — Directional Splint"?optionGroup("Point of Contact Depth","contactDepth",["0.1 mm","0.2 mm","0.3 mm"]):""}${type==="Type B — Stabilization / Tanner / Michigan"?optionGroup("Canine and Anterior Guidance","guidance",["Slight","Medium","Sharp"]):""}${type==="Type C — B-Splint"?`<div class="screen-help">Type C B-Splint is intended only for healthy, stable condyles.</div>`:""}${optionGroup("Minimum Thickness","minimumThickness",["1 mm","2 mm","3 mm","4 mm"])}${optionTextArea("Additional Information","information","Add biteplane instructions...")}`;
+    }
+
+    function renderPartialOptions() {
+      return `${optionGroup("Partial Type","partialType",["Cast Partial Denture","Acrylic Partial Denture"])}${optionGroup("Framework Design","framework",["Standard Framework","Palatal Strap","Lingual Bar","Lingual Plate","Custom Design"])}${optionGroup("Clasp","clasp",["Akers Clasp","RPI Clasp","Ring Clasp","Embrasure Clasp","Wrought Wire Clasp","No Clasp"])}${optionGroup("Clasp / Base Material","claspMaterial",["CrCo","Acrylic PMMA","Flexible Resin","Wrought Wire"])}${optionGroup("Support","support",["Tooth Supported","Tissue Supported","Tooth and Tissue Supported"])}${optionTextArea("Additional Information","information","Describe clasp locations or design instructions...")}`;
+    }
+
+    function renderOptionsPanel() {
+      if (!state.activeProductKey) return `<div class="screen-help">Select a product from the left panel.</div>`;
+      if (!state.selectedMaterial) {
+        const groupName = getProductGroup(state.activeProductKey);
+        const hasMaterials = (MATERIALS_BY_GROUP[groupName]||[]).length > 0;
+        if (hasMaterials) return `<div class="screen-help">Select a material to open the product-specific design options.</div>`;
+      }
+
+      const product=PRODUCTS[state.activeProductKey];
+      let options="";
+      if (product.flow==="crown"||product.flow==="implant") options=renderCrownOptions(product);
+      else if (product.flow==="denture") options=renderDentureOptions();
+      else if (product.flow==="biteplane") options=renderBiteplaneOptions();
+      else if (product.flow==="partial") options=renderPartialOptions();
+      else options=renderRestorativeOptions();
+
+      return `
+        <div class="options-content">
+          <div class="screen-help">
+            Product: <strong>${product.label}</strong> ·
+            Teeth: <strong>${selectedTeethText()}</strong>
+            ${state.selectedMaterial?` · Material: <strong>${state.selectedMaterial}</strong>`:""}
+          </div>
+          ${options}
+          <div class="option-section">
+            <h3>Tooth Shade</h3>
+            <div class="option-grid">${SHADES.map(shade=>`<button class="option-button ${state.case.shade===shade?"selected":""}" style="--option-color:#ded7c9;color:#443f37" onclick="setCaseShadeAndRender('${shade}')">${shade}</button>`).join("")}</div>
+          </div>
+          <div class="config-actions">
+            <button class="config-action config-clear" onclick="clearWorkingConfiguration()">Clear</button>
+            <button class="config-action config-ok" onclick="commitPrescriptionItem()">✓ OK</button>
+          </div>
+        </div>`;
+    }
+
+    function setCaseShadeAndRender(shade) { state.case.shade=shade; render(); }
+
+    /* =========================================================
+       Right panel
+    ========================================================= */
+    function calculateTotals() {
+      const design=state.case.items.reduce((sum,item)=>sum+item.unitPrice*item.quantity,0);
+      const approval=state.case.service==="design"?0:35;
+      const manufacturing=state.case.service==="manufacture"?state.case.items.reduce((sum,item)=>{if(PRODUCTS[item.productKey].flow==="marker")return sum;return sum+(state.case.manufactureMethod==="print"?58:72)*item.quantity;},0):0;
+      const output=state.case.service==="manufacture"&&state.case.output==="applianceModels"?45:0;
+      const modelService=state.case.modelService==="design"?25:state.case.modelService==="designPrint"?62:0;
+      return {design,approval,manufacturing,output,modelService,total:design+approval+manufacturing+output+modelService};
+    }
+
+    function renderPriceLines() {
+      const t=calculateTotals();
+      return `
+        <div class="price-lines">
+          <div class="price-line"><span>Design items</span><strong>${money(t.design)}</strong></div>
+          ${t.approval?`<div class="price-line"><span>Design approval</span><strong>${money(t.approval)}</strong></div>`:""}
+          ${t.manufacturing?`<div class="price-line"><span>${state.case.manufactureMethod==="print"?"3D Print":"Mill"}</span><strong>${money(t.manufacturing)}</strong></div>`:""}
+          ${t.output?`<div class="price-line"><span>Models</span><strong>${money(t.output)}</strong></div>`:""}
+          ${t.modelService?`<div class="price-line"><span>Model service</span><strong>${money(t.modelService)}</strong></div>`:""}
+          <div class="price-line total"><span>Total</span><span>${money(t.total)}</span></div>
+        </div>`;
+    }
+
+    function renderPrescriptionSummary() {
+      return `
+        <div class="prescription-summary">
+          <h3>Case Prescription</h3>
+          ${state.case.items.length?state.case.items.map(item=>{
+            const product=PRODUCTS[item.productKey];
+            return `<div class="rx-item">
+              <div class="rx-head">
+                <span class="rx-color" style="background:${product.color}"></span>
+                <div class="rx-copy">
+                  <strong>${product.label}</strong>
+                  <small>${item.arch||"Teeth: "+item.teeth.join(", ")} · Qty ${item.quantity}${item.material?" · "+item.material:""}</small>
+                </div>
+                <div class="rx-actions">
+                  ${product.flow!=="marker"?`<button class="rx-action" title="Edit item" onclick="editPrescriptionItem('${item.id}')">${icon("edit")}</button>`:""}
+                  <button class="rx-action delete" title="Delete item" onclick="removePrescriptionItem('${item.id}')">${icon("trash")}</button>
+                </div>
+              </div>
+            </div>`;
+          }).join(""):`<div class="empty-prescription">No prescription items yet.<br>Click a tooth in the chart to add a product.</div>`}
+          <div class="service-box">
+            <label>Service</label>
+            <select onchange="setService(this.value)">
+              <option value="design" ${state.case.service==="design"?"selected":""}>Design Only</option>
+              <option value="approve" ${state.case.service==="approve"?"selected":""}>Design &amp; Approve</option>
+              <option value="manufacture" ${state.case.service==="manufacture"?"selected":""}>Design, Approve &amp; Manufacture</option>
+            </select>
+            ${state.case.service==="manufacture"?`
+              <label>Manufacturing Method</label>
+              <select onchange="setManufactureMethod(this.value)">
+                <option value="mill" ${state.case.manufactureMethod==="mill"?"selected":""}>Mill the Design</option>
+                <option value="print" ${state.case.manufactureMethod==="print"?"selected":""}>Print the Design</option>
+              </select>
+              <label>Output</label>
+              <select onchange="setOutput(this.value)">
+                <option value="appliance" ${state.case.output==="appliance"?"selected":""}>Appliance Only</option>
+                <option value="applianceModels" ${state.case.output==="applianceModels"?"selected":""}>Appliance and Models</option>
+              </select>
+              <label>Model Service</label>
+              <select onchange="setModelService(this.value)">
+                <option value="none" ${state.case.modelService==="none"?"selected":""}>No Model Service</option>
+                <option value="design" ${state.case.modelService==="design"?"selected":""}>Include Model Design</option>
+                <option value="designPrint" ${state.case.modelService==="designPrint"?"selected":""}>Include Model Design &amp; Print</option>
+              </select>`:""}
+          </div>
+          ${renderPriceLines()}
+        </div>`;
+    }
+
+    function renderRightPanel() {
+      if (state.screen!=="project") {
+        return `
+          <div class="action-list">
+            <div class="action-item active"><span class="action-icon action-primary">${icon("target")}</span><span>Choose Product</span></div>
+            <div class="action-item ${state.screen==="material"?"active":""}"><span class="action-icon action-yellow">${icon("tooth")}</span><span>Material &amp; Options</span></div>
+            <div class="action-item disabled"><span class="action-icon action-lilac">${icon("design")}</span><span>Review Prescription</span></div>
+          </div>`;
+      }
+      return `
+        <div class="action-list">
+          <div class="action-item active" onclick="focusCaseSetup()"><span class="action-icon action-primary">${icon("target")}</span><span>Case Setup</span></div>
+          <div class="action-item" onclick="openPrescriptionDesigner()"><span class="action-icon action-yellow">${icon("design")}</span><span>Prescription Design</span></div>
+          <div class="action-item ${state.case.items.length?"":"disabled"}" onclick="openFilesModal()">
+            <span class="action-icon action-lilac">${state.case.impressionType==="Traditional Impression"?icon("truck"):icon("upload")}</span>
+            <span>${state.case.impressionType==="Traditional Impression"?"Courier Service":"Digital Files"}</span>
+          </div>
+          <div class="action-item ${state.case.items.length?"":"disabled"}" onclick="openReviewModal()"><span class="action-icon action-green">${icon("review")}</span><span>Review &amp; Checkout</span></div>
+          <div class="action-item disabled"><span class="action-icon action-blue">${icon("manufacture")}</span><span>${state.case.status==="Submitted"?"Submitted":"Manufacture"}</span></div>
+        </div>
+        ${renderPrescriptionSummary()}`;
+    }
+
+    /* =========================================================
+       Main render
+    ========================================================= */
+    function render() {
+      const isConfig=state.screen==="material";
+      document.getElementById("workbench").className=`workbench ${isConfig?"config-layout":""}`;
+      renderHeader();
+      if (state.screen==="project") {
+        document.getElementById("leftPanel").innerHTML=renderProjectPanel();
+        document.getElementById("centerPanel").innerHTML=renderChartPanel();
+        document.getElementById("rightPanel").innerHTML=renderRightPanel();
+        return;
+      }
+      if (state.screen==="catalog") {
+        document.getElementById("leftPanel").innerHTML=renderCatalogue();
+        document.getElementById("centerPanel").innerHTML=renderChartPanel();
+        document.getElementById("rightPanel").innerHTML=renderRightPanel();
+        return;
+      }
+      document.getElementById("leftPanel").innerHTML=renderCatalogue();
+      document.getElementById("centerPanel").innerHTML=renderMaterialPanel();
+      document.getElementById("rightPanel").innerHTML=renderOptionsPanel();
+    }
+
+    /* =========================================================
+       Catalogue
+    ========================================================= */
+    function renderCatalogue() {
+      return `
+        <div class="catalog">
+          <div class="screen-help">
+            Selected: <strong>${selectedTeethText()}</strong>.
+            Use <strong>Ctrl/Cmd + Click</strong> or turn on <strong>Multi-select</strong> to select more teeth. Then choose a product.
+          </div>
+          <div class="catalog-selected">Each selected tooth registers as quantity one. Bite Splint and Full Denture register as one item per arch.</div>
+          ${PRODUCT_GROUPS.map(group=>`
+            <div class="category">
+              <div class="category-title">${group.title}</div>
+              <div class="product-grid">
+                ${group.items.map(key=>{const product=PRODUCTS[key];return `<button class="product-button ${state.activeProductKey===key?"selected":""}" style="--product-color:${product.color}" onclick="chooseProduct('${key}')">${productIcon()}<span>${product.label}</span></button>`;}).join("")}
+              </div>
+            </div>`).join("")}
+        </div>`;
+    }
+
+    /* =========================================================
+       Tooth interactions
+    ========================================================= */
+    function toothClick(number,event) {
+      if (state.screen==="project") {
+        state.currentTooth=number; state.workingTeeth=[number];
+        state.selectedArch=""; state.activeProductKey=null;
+        state.selectedMaterial=null; state.workingConfig={};
+        state.editingItemId=null; state.screen="catalog";
+        render(); return;
+      }
+      const product=state.activeProductKey?PRODUCTS[state.activeProductKey]:null;
+      if (product&&product.mode==="arch") {
+        const upper=UPPER_TEETH.includes(number);
+        state.workingTeeth=upper?[...UPPER_TEETH]:[...LOWER_TEETH];
+        state.selectedArch=upper?"Upper Arch":"Lower Arch";
+        state.currentTooth=number; render(); return;
+      }
+      const useMulti=state.multiSelect||event.ctrlKey||event.metaKey;
+      if (useMulti) { if(state.workingTeeth.includes(number)) state.workingTeeth=state.workingTeeth.filter(t=>t!==number); else state.workingTeeth.push(number); }
+      else state.workingTeeth=[number];
+      state.currentTooth=number; state.selectedArch="";
+      state.workingTeeth.sort((a,b)=>a-b); render();
+    }
+
+    function toggleMultiSelect() { state.multiSelect=!state.multiSelect; render(); }
+
+    function chooseProduct(productKey) {
+      if (!state.workingTeeth.length) { showToast("Select at least one tooth first."); return; }
+      const product=PRODUCTS[productKey];
+      state.activeProductKey=productKey;
+      state.workingConfig=defaultConfig(productKey);
+      state.selectedMaterial=null; state.editingItemId=null;
+      if (product.mode==="arch") {
+        const upper=UPPER_TEETH.includes(state.currentTooth);
+        state.workingTeeth=upper?[...UPPER_TEETH]:[...LOWER_TEETH];
+        state.selectedArch=upper?"Upper Arch":"Lower Arch";
+      }
+      if (product.flow==="marker") { commitMarkerItem(productKey); return; }
+      // Skip material selection if no materials for this group
+      const groupName = getProductGroup(productKey);
+      const hasMaterials = (MATERIALS_BY_GROUP[groupName]||[]).length > 0;
+      if (!hasMaterials) { state.selectedMaterial = ""; state.screen="material"; render(); return; }
+      state.screen="material"; render();
+    }
+
+    function selectMaterial(encodedName) { state.selectedMaterial=decodeURIComponent(encodedName); render(); }
+    function setWorkingOption(field,encodedValue) { state.workingConfig[field]=decodeURIComponent(encodedValue); render(); }
+    function clearWorkingConfiguration() { if(!state.activeProductKey)return; state.workingConfig=defaultConfig(state.activeProductKey); state.selectedMaterial=null; render(); }
+    function itemQuantity(product) { if(product.quantity==="one")return 1; return state.workingTeeth.length; }
+
+    function commitMarkerItem(productKey) {
+      const product=PRODUCTS[productKey];
+      state.case.items.push({id:"item-"+Date.now()+"-"+Math.random().toString(16).slice(2),productKey,teeth:[...state.workingTeeth],arch:state.selectedArch,quantity:itemQuantity(product),unitPrice:product.price,material:"",shade:state.case.shade,config:{}});
+      resetWorkingState(); state.screen="project"; state.case.status="Unsaved Changes";
+      showToast(product.label+" added."); render();
+    }
+
+    function commitPrescriptionItem() {
+      if (!state.activeProductKey) { showToast("Select a product."); return; }
+      if (!state.workingTeeth.length) { showToast("Select at least one tooth."); return; }
+      const groupName = getProductGroup(state.activeProductKey);
+      const hasMaterials = (MATERIALS_BY_GROUP[groupName]||[]).length > 0;
+      if (hasMaterials && !state.selectedMaterial) { showToast("Select a material."); return; }
+      const product=PRODUCTS[state.activeProductKey];
+      const item={id:state.editingItemId||("item-"+Date.now()+"-"+Math.random().toString(16).slice(2)),productKey:state.activeProductKey,teeth:[...state.workingTeeth],arch:state.selectedArch,quantity:itemQuantity(product),unitPrice:product.price,material:state.selectedMaterial||"",shade:state.case.shade,config:clone(state.workingConfig)};
+      if (state.editingItemId) { const idx=state.case.items.findIndex(e=>e.id===state.editingItemId); if(idx!==-1)state.case.items[idx]=item; }
+      else state.case.items.push(item);
+      const wasEditing=Boolean(state.editingItemId);
+      resetWorkingState(); state.screen="project"; state.case.status="Unsaved Changes";
+      showToast(wasEditing?"Prescription item updated.":"Prescription item added."); render();
+    }
+
+    function resetWorkingState() { state.workingTeeth=[]; state.selectedArch=""; state.activeProductKey=null; state.selectedMaterial=null; state.workingConfig={}; state.editingItemId=null; state.multiSelect=false; }
+
+    function editPrescriptionItem(itemId) {
+      const item=state.case.items.find(e=>e.id===itemId);
+      if(!item)return;
+      state.editingItemId=item.id; state.activeProductKey=item.productKey;
+      state.workingTeeth=[...item.teeth]; state.selectedArch=item.arch||"";
+      state.currentTooth=item.teeth[0]||14; state.selectedMaterial=item.material;
+      state.workingConfig=clone(item.config); state.screen="material"; render();
+    }
+
+    function removePrescriptionItem(itemId) { state.case.items=state.case.items.filter(item=>item.id!==itemId); state.case.status="Unsaved Changes"; render(); showToast("Prescription item removed."); }
+
+    function openPrescriptionDesigner() {
+      if (state.case.items.length) { const editable=state.case.items.find(item=>PRODUCTS[item.productKey].flow!=="marker"); if(editable){editPrescriptionItem(editable.id);return;} }
+      showToast("Click a tooth in the dental chart to start.");
+    }
+
+    function goBack() {
+      if (state.screen==="material") { state.screen="catalog"; state.selectedMaterial=null; render(); return; }
+      if (state.screen==="catalog") { resetWorkingState(); state.screen="project"; render(); }
+    }
+
+    /* =========================================================
+       Service
+    ========================================================= */
+    function setService(v) { state.case.service=v; render(); }
+    function setManufactureMethod(v) { state.case.manufactureMethod=v; render(); }
+    function setOutput(v) { state.case.output=v; render(); }
+    function setModelService(v) { state.case.modelService=v; render(); }
+    function focusCaseSetup() { document.getElementById("leftPanel").scrollTo({top:0,behavior:"smooth"}); showToast("Enter patient name and due date before saving."); }
+
+    /* =========================================================
+       Save / New / Load
+    ========================================================= */
+    function validateCaseBasics() {
+      if (!state.case.patientName.trim()) { showToast("Patient name is required."); return false; }
+      if (!state.case.dueDate) { showToast("Due date is required."); return false; }
+      if (!primaryItems().length) { showToast("Add at least one billable product."); return false; }
+      return true;
+    }
+
+    function saveCase(silent=false) {
+      if (!validateCaseBasics()) return false;
+      if (!state.case.id) { state.case.id=createCaseId(); state.case.createdAt=new Date().toISOString(); }
+      state.case.updatedAt=new Date().toISOString();
+      if (state.case.status!=="Submitted") state.case.status="Draft";
+      const cases=storedCases();
+      const index=cases.findIndex(item=>item.id===state.case.id);
+      if(index===-1)cases.push(clone(state.case)); else cases[index]=clone(state.case);
+      persistCases(cases);
+      if (!silent) showToast(state.case.id+" saved successfully.");
+      render(); return true;
+    }
+
+    function newCase() {
+      if(state.case.items.length&&!confirm("Start a new case? Unsaved changes may be lost."))return;
+      state.case=newCaseData(); state.screen="project"; state.currentTooth=14;
+      resetWorkingState(); closeModal(); render(); showToast("New case created.");
+    }
+
+    function openLoadModal() {
+      const cases=storedCases().sort((a,b)=>new Date(b.updatedAt)-new Date(a.updatedAt));
+      openModal(`
+        <section class="modal small">
+          <div class="modal-header"><h2>Load Case</h2><button class="modal-close" onclick="closeModal()">×</button></div>
+          <div class="modal-body">
+            ${cases.length?`<div class="load-list">${cases.map(c=>`<div class="load-item"><div><strong>${escapeHtml(c.reference||c.id)}</strong><small>${escapeHtml(c.id)} · ${escapeHtml(c.patientName||"No patient name")} · ${escapeHtml(c.status)}</small></div><button class="btn btn-outline btn-small" onclick="loadCase('${c.id}')">Load</button></div>`).join("")}</div>`:`<div class="muted" style="padding:35px;text-align:center">No saved cases found.</div>`}
+          </div>
+        </section>`);
+    }
+
+    function loadCase(caseId) {
+      const c=storedCases().find(item=>item.id===caseId);
+      if(!c)return;
+      state.case=clone(c); state.screen="project";
+      resetWorkingState(); closeModal(); render(); showToast(caseId+" loaded.");
+    }
+
+    /* =========================================================
+       Digital files
+    ========================================================= */
+    function getProtocolFields() {
+      const fields=new Map();
+      state.case.items.forEach(item=>{
+        const protocolKey=PRODUCTS[item.productKey].protocol;
+        const protocol=PROTOCOLS[protocolKey]||[];
+        protocol.forEach(field=>{ if(!fields.has(field.id))fields.set(field.id,clone(field)); else if(field.required)fields.get(field.id).required=true; });
+      });
+      return [...fields.values()];
+    }
+
+    function openFilesModal() {
+      if (!state.case.items.length) { showToast("Add prescription items first."); return; }
+      if (state.case.impressionType==="Traditional Impression") {
+        openModal(`
+          <section class="modal small">
+            <div class="modal-header"><h2>Courier Service</h2><button class="modal-close" onclick="closeModal()">×</button></div>
+            <div class="modal-body">
+              <div class="courier-modal-notice">
+                <div style="font-size:48px;margin-bottom:12px">📦</div>
+                <h3>Traditional Impression Selected</h3>
+                <p>No digital scan files are required. Please send your physical impressions to our lab via courier service.</p>
+                <div class="courier-address">
+                  SmileBright Dental Lab<br>
+                  Unit 4, 12 Industrial Drive<br>
+                  Sydney NSW 2000<br>
+                  Australia<br>
+                  <br>
+                  Tel: (02) 9000 0000<br>
+                  lab@smilebright.com.au
+                </div>
+                <p style="font-size:12px;margin-top:8px">Please include a printed copy of your prescription with your impressions. You may proceed directly to Review &amp; Checkout.</p>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-outline" onclick="closeModal()">Close</button>
+              <button class="btn btn-primary" onclick="closeModal();openReviewModal()">Proceed to Review</button>
+            </div>
+          </section>`);
+        return;
+      }
+      renderFilesModal();
+    }
+
+    function renderFilesModal() {
+      const fields=getProtocolFields();
+      openModal(`
+        <section class="modal">
+          <div class="modal-header"><h2>Digital Submission Protocol</h2><button class="modal-close" onclick="closeModal()">×</button></div>
+          <div class="modal-body">
+            <div class="modal-note">Upload the required upper arch, lower arch and bite scan. Full denture cases also require clinical photos or a face scan. This prototype stores file names only.</div>
+            <div class="upload-grid">
+              ${fields.map(field=>{const files=state.case.uploads[field.id]||[];return `<div class="upload-card ${files.length?"complete":""}"><div><span class="upload-status ${field.required?"":"optional"}">${field.required?"Required":"Optional"}</span><h4>${field.label}</h4><p>${field.accept}</p>${files.length?`<div class="upload-file-list">${files.map(f=>"✓ "+escapeHtml(f.name)).join("<br>")}</div>`:""}</div><input class="file-input" id="upload-${field.id}" type="file" multiple accept="${field.accept}" onchange="handleUpload('${field.id}',this.files)"/><label class="upload-label" for="upload-${field.id}">${icon("upload")} ${files.length?"Add / Replace Files":"Choose Files"}</label></div>`;}).join("")}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeModal()">Close</button>
+            <button class="btn btn-primary" onclick="validateFilesAndReview()">Review Case</button>
+          </div>
+        </section>`);
+    }
+
+    function handleUpload(fieldId,fileList) {
+      state.case.uploads[fieldId]=[...fileList].map(f=>({name:f.name,size:f.size,type:f.type}));
+      renderFilesModal(); showToast("Files attached.");
+    }
+
+    function validateFiles(showMessage=true) {
+      if (state.case.impressionType==="Traditional Impression") return true;
+      const fields=getProtocolFields();
+      const missing=fields.filter(f=>f.required&&!(state.case.uploads[f.id]||[]).length);
+      if(missing.length){if(showMessage)showToast("Missing required files: "+missing.map(f=>f.label).join(", "));return false;}
+      const hasDenture=state.case.items.some(item=>PRODUCTS[item.productKey].flow==="denture");
+      if(hasDenture){const photoIds=["frontSmile","leftSmile","rightSmile","frontRetracted"];const hasPhotos=photoIds.some(id=>(state.case.uploads[id]||[]).length);const hasFaceScan=(state.case.uploads.faceScanRetractors||[]).length||(state.case.uploads.faceScanNoRetractors||[]).length;if(!hasPhotos&&!hasFaceScan){if(showMessage)showToast("Full denture cases require photos or a face scan.");return false;}}
+      return true;
+    }
+
+    function validateFilesAndReview() { if(!validateFiles())return; openReviewModal(); }
+
+    /* =========================================================
+       Review / checkout
+    ========================================================= */
+    function serviceLabel() { return {design:"Design Only",approve:"Design & Approve",manufacture:"Design, Approve & Manufacture"}[state.case.service]; }
+
+    function configTags(item) {
+      const values=[];
+      if(item.shade)values.push("Shade "+item.shade);
+      if(item.material)values.push(item.material);
+      Object.values(item.config||{}).forEach(v=>{if(typeof v==="string"&&v.trim()&&!values.includes(v)&&v.length<70)values.push(v);});
+      return values.slice(0,8);
+    }
+
+    function openReviewModal() {
+      if(!validateCaseBasics())return;
+      if(!state.case.id){if(!saveCase(true))return;}
+      renderReviewModal();
+    }
+
+    function renderReviewModal() {
+      const totals=calculateTotals();
+      const payment=state.case.payment;
+      openModal(`
+        <section class="modal">
+          <div class="modal-header"><h2>Review &amp; Checkout</h2><button class="modal-close" onclick="closeModal()">×</button></div>
+          <div class="modal-body">
+            <div class="review-grid">
+              <div>
+                <div class="review-section">
+                  <h3>Case Information</h3>
+                  <div class="review-item">
+                    <strong>${escapeHtml(state.case.patientName)}</strong>
+                    <small>${escapeHtml(state.case.id)} · ${escapeHtml(state.case.client)} · Due: ${escapeHtml(state.case.dueDate||"Not set")}</small>
+                  </div>
+                  <div class="review-item">
+                    <strong>Impression Type</strong>
+                    <small>${escapeHtml(state.case.impressionType)}</small>
+                  </div>
+                </div>
+                <div class="review-section">
+                  <h3>Prescription</h3>
+                  ${state.case.items.map(item=>{const product=PRODUCTS[item.productKey];return `<div class="review-item"><strong>${product.label}</strong><small>${item.arch||"Teeth: "+item.teeth.join(", ")} · Qty ${item.quantity}</small><div style="margin-top:7px;display:flex;flex-wrap:wrap;gap:5px">${configTags(item).map(tag=>`<span style="padding:5px 7px;background:#f0f0f3;border-radius:3px;font-size:10px">${escapeHtml(tag)}</span>`).join("")}</div></div>`;}).join("")}
+                </div>
+                <div class="review-section">
+                  <h3>Checkout</h3>
+                  <div class="payment-methods">
+                    <button class="payment-method ${payment.method==="card"?"selected":""}" onclick="setPaymentMethod('card')">Credit Card</button>
+                    <button class="payment-method ${payment.method==="paypal"?"selected":""}" onclick="setPaymentMethod('paypal')">PayPal</button>
+                  </div>
+                  ${payment.method==="card"?`
+                    <div class="field-group"><label>Name on Card</label><input class="input" value="${escapeHtml(payment.name)}" placeholder="Cardholder name" oninput="state.case.payment.name=this.value"/></div>
+                    <div class="field-group"><label>Card Number</label><input class="input" value="${escapeHtml(payment.card)}" placeholder="4242 4242 4242 4242" oninput="state.case.payment.card=this.value"/></div>
+                    <div class="option-input-grid">
+                      <div class="field-group"><label>Expiry</label><input class="input" value="${escapeHtml(payment.expiry)}" placeholder="MM/YY" oninput="state.case.payment.expiry=this.value"/></div>
+                      <div class="field-group"><label>CVV</label><input class="input" value="${escapeHtml(payment.cvv)}" placeholder="123" oninput="state.case.payment.cvv=this.value"/></div>
+                    </div>`:`
+                    <div class="field-group"><label>PayPal Email</label><input class="input" type="email" value="${escapeHtml(payment.paypalEmail)}" placeholder="paypal@example.com" oninput="state.case.payment.paypalEmail=this.value"/></div>`}
+                  <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;line-height:1.45"><input type="checkbox" ${payment.terms?"checked":""} onchange="state.case.payment.terms=this.checked"/><span>I confirm that the prescription and submitted information are correct.</span></label>
+                </div>
+              </div>
+              <aside class="review-summary">
+                <h3 style="margin:0 0 13px;color:var(--primary)">Order Summary</h3>
+                <div class="review-item"><strong>${serviceLabel()}</strong><small>${state.case.service==="design"?"Delivered by customer download link":state.case.service==="approve"?"Customer approval required":"Approval followed by manufacturing"}</small></div>
+                ${state.case.service==="manufacture"?`<div class="review-item"><strong>${state.case.manufactureMethod==="print"?"Print the Design":"Mill the Design"}</strong><small>${state.case.output==="applianceModels"?"Appliance and Models":"Appliance Only"}</small></div>`:""}
+                ${renderPriceLines()}
+              </aside>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" onclick="${state.case.impressionType==="Traditional Impression"?"openFilesModal()":"openFilesModal()"}">
+              ${state.case.impressionType==="Traditional Impression"?icon("truck")+" Courier Info":icon("upload")+" Digital Files"}
+            </button>
+            <button class="btn btn-success" onclick="submitCase()">${icon("check")} Pay &amp; Submit</button>
+          </div>
+        </section>`);
+    }
+
+    function setPaymentMethod(method) { state.case.payment.method=method; renderReviewModal(); }
+
+    function submitCase() {
+      if(!validateCaseBasics())return;
+      if(!validateFiles()){openFilesModal();return;}
+      const payment=state.case.payment;
+      if(!payment.terms){showToast("Please confirm the prescription.");return;}
+      if(payment.method==="card"){if(!payment.name.trim()||!payment.card.trim()||!payment.expiry.trim()||!payment.cvv.trim()){showToast("Complete the credit card fields.");return;}}
+      else if(!payment.paypalEmail.trim()){showToast("Enter the PayPal email.");return;}
+
+      // Auto-generate reference on first submission
+      if (!state.case.reference) state.case.reference = generateReference();
+
+      state.case.status="Submitted"; state.case.updatedAt=new Date().toISOString();
+      const cases=storedCases();
+      const index=cases.findIndex(item=>item.id===state.case.id);
+      if(index===-1)cases.push(clone(state.case)); else cases[index]=clone(state.case);
+      persistCases(cases); renderSuccessModal(); render();
+    }
+
+    function renderSuccessModal() {
+      openModal(`
+        <section class="modal small">
+          <div class="success-view">
+            <div class="success-icon">${icon("check")}</div>
+            <h2>Case submitted successfully</h2>
+            <p>The case has been routed according to the selected prescription and service.</p>
+            <p>Case Reference: <strong>${escapeHtml(state.case.reference)}</strong><br>Case ID: <strong>${escapeHtml(state.case.id)}</strong><br>Service: <strong>${serviceLabel()}</strong></p>
+            <button class="btn btn-primary" onclick="closeModal()">Return to Project</button>
+            <button class="btn btn-outline" onclick="downloadPrescription()">${icon("download")} Download Prescription</button>
+          </div>
+        </section>`);
+    }
+
+    /* =========================================================
+       Prescription download
+    ========================================================= */
+    function downloadPrescription() {
+      const totals=calculateTotals();
+      const lines=["DENTAL CASE PRESCRIPTION","========================",`Case Reference: ${state.case.reference}`,`Case ID: ${state.case.id}`,`Patient: ${state.case.patientName}`,`Client: ${state.case.client}`,`Due Date: ${state.case.dueDate}`,`Service: ${serviceLabel()}`,`Shade: ${state.case.shade}`,`Impression Type: ${state.case.impressionType}`,"","ITEMS"];
+      state.case.items.forEach((item,index)=>{const product=PRODUCTS[item.productKey];lines.push(`${index+1}. ${product.label}`,`   Teeth / Arch: ${item.arch||item.teeth.join(", ")}`,`   Quantity: ${item.quantity}`,`   Material: ${item.material||"N/A"}`,`   Shade: ${item.shade||"N/A"}`);});
+      lines.push("",`Total: ${money(totals.total)}`);
+      const blob=new Blob([lines.join("\n")],{type:"text/plain"});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement("a"); a.href=url; a.download=`${state.case.reference||state.case.id||"case"}-prescription.txt`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+    }
+
+    /* =========================================================
+       Modal / Help
+    ========================================================= */
+    function openModal(content) { document.getElementById("modalRoot").innerHTML=`<div class="modal-backdrop" onclick="modalBackdropClose(event)">${content}</div>`; }
+    function closeModal() { document.getElementById("modalRoot").innerHTML=""; }
+    function modalBackdropClose(event) { if(event.target.classList.contains("modal-backdrop"))closeModal(); }
+
+    function showHelp() {
+      openModal(`
+        <section class="modal small">
+          <div class="modal-header"><h2>How to Create a Case</h2><button class="modal-close" onclick="closeModal()">×</button></div>
+          <div class="modal-body" style="line-height:1.65">
+            <ol>
+              <li>Enter the patient name and due date.</li>
+              <li>Select the impression type on the right of the dental chart.</li>
+              <li>Click a tooth in the dental chart.</li>
+              <li>Hold Ctrl/Cmd or activate Multi-select to choose additional teeth.</li>
+              <li>Choose a product from the left panel.</li>
+              <li>Select material and product-specific options.</li>
+              <li>Click OK to add the prescription item.</li>
+              <li>Select service and review the calculated price.</li>
+              <li>Click Save.</li>
+              <li>${`For Intra Oral / Bench top scan: Upload required digital files. For Traditional Impression: send via courier.`}</li>
+              <li>Review, complete payment and submit.</li>
+            </ol>
+            <div class="modal-note">Full Denture and Bite Splint products select one complete arch and register as quantity one.</div>
+          </div>
+          <div class="modal-footer"><button class="btn btn-primary" onclick="closeModal()">Got It</button></div>
+        </section>`);
+    }
+
+    render();
+  </script>
+</body>
+</html>
