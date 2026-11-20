@@ -33,7 +33,7 @@ export function prescriptionFileCode(): string {
 }
 
 async function loadBrandLogoDataUrl(): Promise<string | null> {
-    for (const path of ['/logo.png', '/images/dds-logo.png']) {
+    for (const path of ['/images/dds-logo.png']) {
         try {
             const response = await fetch(path);
 
@@ -173,15 +173,23 @@ export async function buildPrescriptionPdfBlob(
     drawPageChrome();
 
     // —— Header: brand + stub ——
+    // The logo is a wide wordmark: keep its aspect ratio instead of a square.
+    const logoHeight = 40;
+    let logoWidth = 0;
+
     if (logoDataUrl) {
         try {
-            doc.addImage(logoDataUrl, 'PNG', leftX, y, 42, 42);
+            const { width, height } = doc.getImageProperties(logoDataUrl);
+            const drawWidth = (logoHeight * width) / height;
+
+            doc.addImage(logoDataUrl, 'PNG', leftX, y, drawWidth, logoHeight);
+            logoWidth = drawWidth;
         } catch {
             // text brand fallback below
         }
     }
 
-    const brandTextX = logoDataUrl ? leftX + 52 : leftX;
+    const brandTextX = logoWidth > 0 ? leftX + logoWidth + 12 : leftX;
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
     doc.setTextColor(BRAND.primary);
