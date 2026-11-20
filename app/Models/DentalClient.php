@@ -19,6 +19,8 @@ class DentalClient extends Model
     protected $fillable = [
         'code',
         'name',
+        'address',
+        'office_number',
         'is_active',
     ];
 

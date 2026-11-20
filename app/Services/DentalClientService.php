@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\DentalClient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DentalClientService
 {
@@ -18,6 +19,18 @@ class DentalClientService
     public function create(array $data): DentalClient
     {
         return $this->model->newQuery()->create($data);
+    }
+
+    /**
+     * Generate a unique client code, e.g. CL-7K3QX9 (used for self-registered clients).
+     */
+    public function generateCode(): string
+    {
+        do {
+            $code = 'CL-'.Str::upper(Str::random(6));
+        } while ($this->model->newQuery()->withTrashed()->where('code', $code)->exists());
+
+        return $code;
     }
 
     /**

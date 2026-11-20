@@ -101,17 +101,12 @@ export function DashboardSidebar({
 
     return (
         <aside className="fixed inset-y-0 left-0 z-40 hidden w-(--dashboard-sidebar-width) flex-col border-r border-[#e5e7eb] bg-white md:flex">
-            <div className="flex items-center gap-2 border-b border-[#e2e8f0] px-6 py-3">
-                <div className="relative size-10 shrink-0 overflow-hidden rounded-lg border border-black/8">
-                    <img
-                        src={logoSrc}
-                        alt="DDS"
-                        className="size-full object-cover"
-                    />
-                </div>
-                <span className="font-inter text-xl leading-7 font-bold tracking-wide text-[#f967a1]">
-                    D D S
-                </span>
+            <div className="flex items-center border-b border-[#e2e8f0] px-6 py-3">
+                <img
+                    src={logoSrc}
+                    alt="Rad Dental"
+                    className="h-10 w-auto max-w-full object-contain"
+                />
             </div>
 
             <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-2">

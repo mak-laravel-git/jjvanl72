@@ -8,8 +8,8 @@ export default function AppLogo({ className, ...props }: AppLogoProps) {
     return (
         <>
             <img
-                src="/logo.png"
-                alt="App Logo"
+                src="/images/dds-logo.png"
+                alt="Rad Dental"
                 className={cn('w-auto max-w-[420px] object-contain', className)}
                 {...props}
             />

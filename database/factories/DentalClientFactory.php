@@ -21,6 +21,8 @@ class DentalClientFactory extends Factory
         return [
             'code' => Str::upper(Str::substr(Str::slug($name, ''), 0, 8)).fake()->unique()->numerify('##'),
             'name' => $name,
+            'address' => fake()->streetAddress().', '.fake()->city(),
+            'office_number' => fake()->phoneNumber(),
             'is_active' => true,
         ];
     }
