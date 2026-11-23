@@ -13,18 +13,14 @@ import {
 import AdminLayout from '@/layouts/admin-layout';
 import { cn } from '@/lib/utils';
 import {
-    create as productsCreate,
     destroy,
+    create as productsCreate,
     edit as productsEdit,
     index as productsIndex,
 } from '@/routes/admin/dental-products';
-import type { PaginationData } from '@/types/data-table.types';
 import type { SharedData } from '@/types';
-import type {
-    GroupOption,
-    MaterialOption,
-    ProductRow,
-} from './FormFields';
+import type { PaginationData } from '@/types/data-table.types';
+import type { GroupOption, MaterialOption, ProductRow } from './FormFields';
 
 const asset = (name: string) => `/images/admin-dashboard/${name}`;
 const ALL_STATUS_VALUE = '__all__';
@@ -93,9 +89,7 @@ export default function DentalProductsIndex({
                 sort_order: sort_by ? sort_order || 'asc' : undefined,
                 per_page: pagination.per_page,
                 page: pagination.current_page,
-                ...(statusFilter
-                    ? { 'filters[is_active]': statusFilter }
-                    : {}),
+                ...(statusFilter ? { 'filters[is_active]': statusFilter } : {}),
                 ...(groupFilter
                     ? { 'filters[dental_product_group_id]': groupFilter }
                     : {}),
@@ -342,7 +336,7 @@ export default function DentalProductsIndex({
 
                 <div className="mt-[22.5px] overflow-hidden rounded-[13.375px] border border-[#e2e8f0] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[980px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[980px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[19px] py-[11px]">#</th>
@@ -406,10 +400,16 @@ export default function DentalProductsIndex({
                                                     'border-b',
                                             )}
                                         >
-                                            <td className="px-[19px] py-[14px] text-[11.25px] text-[#475569]">
+                                            <td
+                                                data-label="#"
+                                                className="px-[19px] py-[14px] text-[11.25px] text-[#475569]"
+                                            >
                                                 {offset + index + 1}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Color"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <span className="inline-flex items-center gap-2">
                                                     <span
                                                         className="size-5 shrink-0 rounded-[6px] border border-[#e2e8f0]"
@@ -424,7 +424,10 @@ export default function DentalProductsIndex({
                                                     </span>
                                                 </span>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]">
+                                            <td
+                                                data-label="Name"
+                                                className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]"
+                                            >
                                                 <div className="flex items-center gap-2.5">
                                                     {product.icon_url ? (
                                                         <img
@@ -442,13 +445,19 @@ export default function DentalProductsIndex({
                                                     <span>{product.name}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] text-[#475569]">
+                                            <td
+                                                data-label="Group"
+                                                className="px-[19px] py-[14px] text-[13.125px] text-[#475569]"
+                                            >
                                                 {groupLabel(
                                                     product.group_code,
                                                     product.group_name,
                                                 )}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Materials"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <button
                                                     type="button"
                                                     onClick={() =>
@@ -463,7 +472,10 @@ export default function DentalProductsIndex({
                                                         : `${product.materials_count} material${product.materials_count === 1 ? '' : 's'}`}
                                                 </button>
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Status"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <span
                                                     className={cn(
                                                         'rounded-full px-2.5 py-1 text-[11.25px] font-semibold',
@@ -475,10 +487,16 @@ export default function DentalProductsIndex({
                                                     {product.status}
                                                 </span>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] text-[#475569]">
+                                            <td
+                                                data-label="Updated"
+                                                className="px-[19px] py-[14px] text-[11.25px] text-[#475569]"
+                                            >
                                                 {product.updated_at}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center justify-end gap-[1.875px]">
                                                     <button
                                                         type="button"
@@ -576,13 +594,10 @@ export default function DentalProductsIndex({
                                         <button
                                             key={page}
                                             type="button"
-                                            onClick={() =>
-                                                navigate({ page })
-                                            }
+                                            onClick={() => navigate({ page })}
                                             className={cn(
                                                 'rounded-[9.375px] border px-[9px] py-[5px] text-[11.25px] font-semibold',
-                                                page ===
-                                                    pagination.current_page
+                                                page === pagination.current_page
                                                     ? 'border-[#0260bd] bg-[#0260bd] text-white'
                                                     : 'border-[#e2e8f0] bg-white text-[#475569]',
                                             )}
@@ -670,10 +685,7 @@ export default function DentalProductsIndex({
                                     </span>
                                 </div>
                             </div>
-                            <DetailField
-                                label="Name"
-                                value={viewTarget.name}
-                            />
+                            <DetailField label="Name" value={viewTarget.name} />
                             <DetailField
                                 label="Group"
                                 value={groupLabel(
@@ -717,7 +729,7 @@ export default function DentalProductsIndex({
                                 </p>
                             ) : (
                                 <div className="overflow-hidden rounded-[9.375px] border border-[#e2e8f0]">
-                                    <table className="w-full border-collapse">
+                                    <table className="responsive-cards w-full border-collapse">
                                         <thead>
                                             <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                                 <th className="px-3 py-2">
@@ -738,7 +750,10 @@ export default function DentalProductsIndex({
                                                         key={material.id}
                                                         className="border-b border-[#e2e8f0] last:border-b-0"
                                                     >
-                                                        <td className="px-3 py-2.5 text-[13.125px] text-[#050315]">
+                                                        <td
+                                                            data-label="Material"
+                                                            className="px-3 py-2.5 text-[13.125px] text-[#050315]"
+                                                        >
                                                             <span className="font-mono font-semibold text-[#0260bd]">
                                                                 {material.code}
                                                             </span>
@@ -746,7 +761,10 @@ export default function DentalProductsIndex({
                                                                 {material.name}
                                                             </span>
                                                         </td>
-                                                        <td className="px-3 py-2.5">
+                                                        <td
+                                                            data-label="Default"
+                                                            className="px-3 py-2.5"
+                                                        >
                                                             {material.is_default ? (
                                                                 <span className="rounded-full bg-[#0260bd] px-2 py-0.5 text-[10px] font-semibold text-white">
                                                                     Default
@@ -757,7 +775,10 @@ export default function DentalProductsIndex({
                                                                 </span>
                                                             )}
                                                         </td>
-                                                        <td className="px-3 py-2.5 text-[13.125px] text-[#475569]">
+                                                        <td
+                                                            data-label="Sort"
+                                                            className="px-3 py-2.5 text-[13.125px] text-[#475569]"
+                                                        >
                                                             {
                                                                 material.sort_order
                                                             }
@@ -872,10 +893,7 @@ function SortHeader({
     );
 }
 
-function buildPageNumbers(
-    current: number,
-    last: number,
-): Array<number | '…'> {
+function buildPageNumbers(current: number, last: number): Array<number | '…'> {
     if (last <= 1) {
         return last === 1 ? [1] : [];
     }

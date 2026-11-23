@@ -168,7 +168,7 @@ export default function ProductsServices({
 
                 <div className="mt-[22.5px] overflow-hidden rounded-[13.375px] border border-[#e2e8f0] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[900px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[900px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[19px] py-[11px] font-bold">
@@ -215,10 +215,16 @@ export default function ProductsServices({
                                                     'border-b',
                                             )}
                                         >
-                                            <td className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-semibold text-[#050315]">
+                                            <td
+                                                data-label="Product"
+                                                className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-semibold text-[#050315]"
+                                            >
                                                 {product.name}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Category"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <span
                                                     className={cn(
                                                         'inline-flex rounded-full px-[7.5px] py-[1.5px] text-[11.25px] leading-[15px] font-semibold',
@@ -232,19 +238,34 @@ export default function ProductsServices({
                                                     {product.category}
                                                 </span>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]">
+                                            <td
+                                                data-label="Material"
+                                                className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]"
+                                            >
                                                 {product.material}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-bold text-[#050315]">
+                                            <td
+                                                data-label="Design Price"
+                                                className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-bold text-[#050315]"
+                                            >
                                                 {product.design_price}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-bold text-[#050315]">
+                                            <td
+                                                data-label="Mfg Price"
+                                                className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-bold text-[#050315]"
+                                            >
                                                 {product.mfg_price}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-semibold text-[#ea580c]">
+                                            <td
+                                                data-label="Rush Fee"
+                                                className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-semibold text-[#ea580c]"
+                                            >
                                                 {product.rush_fee}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center gap-[1.875px]">
                                                     <button
                                                         type="button"

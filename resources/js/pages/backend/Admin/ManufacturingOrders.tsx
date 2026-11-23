@@ -78,7 +78,7 @@ export default function ManufacturingOrders({
 
                 <div className="mt-[22.5px] overflow-hidden rounded-[13.375px] border border-[#e2e8f0] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[900px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[900px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[19px] py-[11px]">
@@ -114,19 +114,34 @@ export default function ManufacturingOrders({
                                                 'border-b',
                                         )}
                                     >
-                                        <td className="px-[19px] py-4 font-mono text-[11.25px] font-bold text-[#0260bd]">
+                                        <td
+                                            data-label="Case ID"
+                                            className="px-[19px] py-4 font-mono text-[11.25px] font-bold text-[#0260bd]"
+                                        >
                                             {order.id}
                                         </td>
-                                        <td className="px-[19px] py-4 text-[13.125px] font-semibold text-[#050315]">
+                                        <td
+                                            data-label="Customer"
+                                            className="px-[19px] py-4 text-[13.125px] font-semibold text-[#050315]"
+                                        >
                                             {order.customer}
                                         </td>
-                                        <td className="px-[19px] py-4 text-[13.125px] text-[#475569]">
+                                        <td
+                                            data-label="Product"
+                                            className="px-[19px] py-4 text-[13.125px] text-[#475569]"
+                                        >
                                             {order.product}
                                         </td>
-                                        <td className="px-[19px] py-4 text-[13.125px] text-[#475569]">
+                                        <td
+                                            data-label="Manufacturer"
+                                            className="px-[19px] py-4 text-[13.125px] text-[#475569]"
+                                        >
                                             {order.manufacturer}
                                         </td>
-                                        <td className="px-[19px] py-4">
+                                        <td
+                                            data-label="Status"
+                                            className="px-[19px] py-4"
+                                        >
                                             <span
                                                 className={cn(
                                                     'inline-flex rounded-full border px-[7.5px] py-[1.5px] text-[11.25px]',
@@ -138,10 +153,16 @@ export default function ManufacturingOrders({
                                                 {order.status}
                                             </span>
                                         </td>
-                                        <td className="px-[19px] py-4 text-[11.25px] text-[#475569]">
+                                        <td
+                                            data-label="Due Date"
+                                            className="px-[19px] py-4 text-[11.25px] text-[#475569]"
+                                        >
                                             {order.due_date}
                                         </td>
-                                        <td className="px-[19px] py-4">
+                                        <td
+                                            data-label="Actions"
+                                            className="px-[19px] py-4"
+                                        >
                                             <div className="flex items-center gap-2">
                                                 {order.can_advance ? (
                                                     <button

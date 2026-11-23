@@ -289,7 +289,7 @@ export default function BillingFinance({
                         </h2>
                     </div>
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[980px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[980px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[19px] py-[11px] font-bold">
@@ -336,7 +336,10 @@ export default function BillingFinance({
                                                     'border-b',
                                             )}
                                         >
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Invoice"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <button
                                                     type="button"
                                                     onClick={() =>
@@ -347,13 +350,22 @@ export default function BillingFinance({
                                                     {invoice.number}
                                                 </button>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-semibold text-[#050315]">
+                                            <td
+                                                data-label="Customer"
+                                                className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-semibold text-[#050315]"
+                                            >
                                                 {invoice.customer}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-bold text-[#050315]">
+                                            <td
+                                                data-label="Amount"
+                                                className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-bold text-[#050315]"
+                                            >
                                                 {invoice.amount}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Status"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <span
                                                     className={cn(
                                                         'inline-flex rounded-full px-[7.5px] py-[1.5px] text-[11.25px] leading-[15px] font-semibold',
@@ -366,13 +378,22 @@ export default function BillingFinance({
                                                     {invoice.status}
                                                 </span>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]">
+                                            <td
+                                                data-label="Date"
+                                                className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]"
+                                            >
                                                 {invoice.date}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]">
+                                            <td
+                                                data-label="Due Date"
+                                                className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]"
+                                            >
                                                 {invoice.due_date}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center gap-[1.875px]">
                                                     <button
                                                         type="button"

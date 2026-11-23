@@ -142,7 +142,7 @@ export default function DesignerRevisionCases({ cases }: Props) {
 
                 <div className="overflow-hidden rounded border border-[#e2e8f0] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[1100px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[1100px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#fdfdfd]">
                                     {tableHeadings.map((heading) => (
@@ -165,25 +165,44 @@ export default function DesignerRevisionCases({ cases }: Props) {
                                                 'bg-[rgba(249,250,251,0.2)]',
                                         )}
                                     >
-                                        <td className="px-4 py-[13px] text-sm leading-5 font-semibold tracking-[-0.16px] whitespace-nowrap text-[#0260bd]">
+                                        <td
+                                            data-label="Case ID"
+                                            className="px-4 py-[13px] text-sm leading-5 font-semibold tracking-[-0.16px] whitespace-nowrap text-[#0260bd]"
+                                        >
                                             {item.id}
                                         </td>
-                                        <td className="px-4 py-[13px] text-xs tracking-[-0.12px] whitespace-nowrap text-[#4a5565]">
+                                        <td
+                                            data-label="Customer"
+                                            className="px-4 py-[13px] text-xs tracking-[-0.12px] whitespace-nowrap text-[#4a5565]"
+                                        >
                                             {item.customer}
                                         </td>
-                                        <td className="px-4 py-[13px] text-xs font-semibold tracking-[-0.12px] whitespace-nowrap text-[#1e2939]">
+                                        <td
+                                            data-label="Product Type"
+                                            className="px-4 py-[13px] text-xs font-semibold tracking-[-0.12px] whitespace-nowrap text-[#1e2939]"
+                                        >
                                             {item.product}
                                         </td>
-                                        <td className="px-4 py-[13px] text-xs tracking-[-0.12px] whitespace-nowrap text-[#6a7282]">
+                                        <td
+                                            data-label="Dentist / Lab"
+                                            className="px-4 py-[13px] text-xs tracking-[-0.12px] whitespace-nowrap text-[#6a7282]"
+                                        >
                                             {item.client}
                                         </td>
-                                        <td className="px-4 py-[13px] text-xs tracking-[-0.12px] whitespace-nowrap text-[#99a1af]">
+                                        <td
+                                            data-label="Assigned"
+                                            className="px-4 py-[13px] text-xs tracking-[-0.12px] whitespace-nowrap text-[#99a1af]"
+                                        >
                                             {item.assigned_date}
                                         </td>
-                                        <td className="px-4 py-[13px] text-xs tracking-[-0.12px] whitespace-nowrap text-[#6a7282]">
+                                        <td
+                                            data-label="Due Date"
+                                            className="px-4 py-[13px] text-xs tracking-[-0.12px] whitespace-nowrap text-[#6a7282]"
+                                        >
                                             {item.due_date}
                                         </td>
                                         <td
+                                            data-label="Priority"
                                             className={cn(
                                                 'px-4 py-[13px] text-xs font-semibold tracking-[-0.12px] whitespace-nowrap',
                                                 priorityClasses[item.priority],
@@ -191,12 +210,18 @@ export default function DesignerRevisionCases({ cases }: Props) {
                                         >
                                             {item.priority}
                                         </td>
-                                        <td className="px-4 py-[13px]">
+                                        <td
+                                            data-label="Status"
+                                            className="px-4 py-[13px]"
+                                        >
                                             <span className="inline-flex h-[19px] min-w-[126px] items-center justify-center rounded border border-[#ffccd3] bg-[#fff1f2] px-2 font-mono text-[10px] leading-[15px] font-medium whitespace-nowrap text-[#c70036]">
                                                 {item.status}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-[13px]">
+                                        <td
+                                            data-label="Actions"
+                                            className="px-4 py-[13px]"
+                                        >
                                             <Link
                                                 href={designerCaseHref(
                                                     item.id,

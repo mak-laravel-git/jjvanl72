@@ -1,11 +1,6 @@
 import { Form, Head, router, usePage } from '@inertiajs/react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import {
-    useCallback,
-    useEffect,
-    useState,
-    type ReactNode,
-} from 'react';
+import { useCallback, useEffect, useState, type ReactNode } from 'react';
 
 import { AdminModal } from '@/components/admin-modal';
 import {
@@ -18,13 +13,13 @@ import {
 import AdminLayout from '@/layouts/admin-layout';
 import { cn } from '@/lib/utils';
 import {
-    destroy,
     index as clientsIndex,
+    destroy,
     store,
     update,
 } from '@/routes/admin/dental-clients';
-import type { PaginationData } from '@/types/data-table.types';
 import type { SharedData } from '@/types';
+import type { PaginationData } from '@/types/data-table.types';
 
 const asset = (name: string) => `/images/admin-dashboard/${name}`;
 const ALL_STATUS_VALUE = '__all__';
@@ -90,9 +85,7 @@ export default function DentalClientsIndex({
                 sort_order: sort_by ? sort_order || 'asc' : undefined,
                 per_page: pagination.per_page,
                 page: pagination.current_page,
-                ...(statusFilter
-                    ? { 'filters[is_active]': statusFilter }
-                    : {}),
+                ...(statusFilter ? { 'filters[is_active]': statusFilter } : {}),
                 ...overrides,
             };
 
@@ -300,7 +293,7 @@ export default function DentalClientsIndex({
 
                 <div className="mt-[22.5px] overflow-hidden rounded-[13.375px] border border-[#e2e8f0] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[720px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[720px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[19px] py-[11px]">#</th>
@@ -344,8 +337,8 @@ export default function DentalClientsIndex({
                                             colSpan={6}
                                             className="px-[19px] py-10 text-center text-[13.125px] text-[#475569]"
                                         >
-                                            No dental clients match the
-                                            current filters.
+                                            No dental clients match the current
+                                            filters.
                                         </td>
                                     </tr>
                                 ) : (
@@ -358,16 +351,28 @@ export default function DentalClientsIndex({
                                                     'border-b',
                                             )}
                                         >
-                                            <td className="px-[19px] py-[14px] text-[11.25px] text-[#475569]">
+                                            <td
+                                                data-label="#"
+                                                className="px-[19px] py-[14px] text-[11.25px] text-[#475569]"
+                                            >
                                                 {offset + index + 1}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]">
+                                            <td
+                                                data-label="Code"
+                                                className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]"
+                                            >
                                                 {client.code}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]">
+                                            <td
+                                                data-label="Name"
+                                                className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]"
+                                            >
                                                 {client.name}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Status"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <span
                                                     className={cn(
                                                         'rounded-full px-2.5 py-1 text-[11.25px] font-semibold',
@@ -379,10 +384,16 @@ export default function DentalClientsIndex({
                                                     {client.status}
                                                 </span>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] text-[#475569]">
+                                            <td
+                                                data-label="Updated"
+                                                className="px-[19px] py-[14px] text-[11.25px] text-[#475569]"
+                                            >
                                                 {client.updated_at}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center justify-end gap-[1.875px]">
                                                     {canUpdate ? (
                                                         <button
@@ -482,13 +493,10 @@ export default function DentalClientsIndex({
                                         <button
                                             key={page}
                                             type="button"
-                                            onClick={() =>
-                                                navigate({ page })
-                                            }
+                                            onClick={() => navigate({ page })}
                                             className={cn(
                                                 'rounded-[9.375px] border px-[9px] py-[5px] text-[11.25px] font-semibold',
-                                                page ===
-                                                    pagination.current_page
+                                                page === pagination.current_page
                                                     ? 'border-[#0260bd] bg-[#0260bd] text-white'
                                                     : 'border-[#e2e8f0] bg-white text-[#475569]',
                                             )}
@@ -802,10 +810,7 @@ function ClientFormFields({
     );
 }
 
-function buildPageNumbers(
-    current: number,
-    last: number,
-): Array<number | '…'> {
+function buildPageNumbers(current: number, last: number): Array<number | '…'> {
     if (last <= 1) {
         return last === 1 ? [1] : [];
     }

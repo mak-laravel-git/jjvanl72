@@ -1,6 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
 
 import { AdminModal } from '@/components/admin-modal';
 import AdminLayout from '@/layouts/admin-layout';
@@ -9,8 +8,8 @@ import {
     create as createUser,
     destroy,
     edit as editUser,
-    index as usersIndex,
     show as showUser,
+    index as usersIndex,
 } from '@/routes/admin/users';
 import type { SharedData } from '@/types';
 
@@ -228,7 +227,7 @@ export default function UserManagement({
 
                 <div className="mt-[22.5px] overflow-hidden rounded-[13.375px] border border-[#e2e8f0] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[900px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[900px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[19px] py-[11px] font-bold">
@@ -274,11 +273,16 @@ export default function UserManagement({
                                                     'border-b',
                                             )}
                                         >
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Name"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center gap-[11.25px]">
                                                     {user.avatar_url ? (
                                                         <img
-                                                            src={user.avatar_url}
+                                                            src={
+                                                                user.avatar_url
+                                                            }
                                                             alt=""
                                                             className="size-[26.25px] shrink-0 rounded-full object-cover"
                                                         />
@@ -301,16 +305,28 @@ export default function UserManagement({
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]">
+                                            <td
+                                                data-label="Email"
+                                                className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]"
+                                            >
                                                 {user.email}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]">
+                                            <td
+                                                data-label="Phone"
+                                                className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]"
+                                            >
                                                 {user.phone || '—'}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]">
+                                            <td
+                                                data-label="Location"
+                                                className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]"
+                                            >
                                                 {user.location}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Status"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <span
                                                     className={cn(
                                                         'inline-flex rounded-full px-[7.5px] py-[1.5px] text-[11.25px] leading-[15px] font-semibold',
@@ -323,10 +339,16 @@ export default function UserManagement({
                                                     {user.status}
                                                 </span>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]">
+                                            <td
+                                                data-label="Joined"
+                                                className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]"
+                                            >
                                                 {user.joined}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center justify-end gap-[1.875px]">
                                                     <Link
                                                         href={showUser.url(

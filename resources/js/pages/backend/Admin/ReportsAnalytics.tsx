@@ -203,7 +203,7 @@ export default function ReportsAnalytics({
                         </h2>
                     </div>
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[800px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[800px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[19px] py-[11px] font-bold">
@@ -233,7 +233,10 @@ export default function ReportsAnalytics({
                                                 'border-b',
                                         )}
                                     >
-                                        <td className="px-[19px] py-[14px]">
+                                        <td
+                                            data-label="Designer"
+                                            className="px-[19px] py-[14px]"
+                                        >
                                             <div className="flex items-center gap-[11.25px]">
                                                 <div className="flex size-[26.25px] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#0260bd] to-[#6ea2d5]">
                                                     <span className="text-[11.25px] leading-[15px] font-semibold text-white">
@@ -245,13 +248,22 @@ export default function ReportsAnalytics({
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-bold text-[#050315]">
+                                        <td
+                                            data-label="Cases"
+                                            className="px-[19px] py-[14px] text-[13.125px] leading-[18.75px] font-bold text-[#050315]"
+                                        >
                                             {designer.cases}
                                         </td>
-                                        <td className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]">
+                                        <td
+                                            data-label="Avg Turnaround"
+                                            className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]"
+                                        >
                                             {designer.avg_turnaround}
                                         </td>
-                                        <td className="px-[19px] py-[14px]">
+                                        <td
+                                            data-label="Approval Rate"
+                                            className="px-[19px] py-[14px]"
+                                        >
                                             <div className="flex items-center gap-3">
                                                 <div className="h-2 w-24 overflow-hidden rounded-full bg-[#e2e8f0]">
                                                     <div
@@ -266,7 +278,10 @@ export default function ReportsAnalytics({
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-[19px] py-[14px] text-[11.25px] font-semibold text-[#ea580c]">
+                                        <td
+                                            data-label="Revision Rate"
+                                            className="px-[19px] py-[14px] text-[11.25px] font-semibold text-[#ea580c]"
+                                        >
                                             {designer.revision_rate}%
                                         </td>
                                     </tr>

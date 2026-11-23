@@ -11,13 +11,13 @@ import {
 } from '@/components/ui/select';
 import AdminLayout from '@/layouts/admin-layout';
 import {
-    create as packagePricesCreate,
     destroy,
+    create as packagePricesCreate,
     edit as packagePricesEdit,
     index as packagePricesIndex,
 } from '@/routes/admin/dental-package-prices';
-import type { PaginationData } from '@/types/data-table.types';
 import type { SharedData } from '@/types';
+import type { PaginationData } from '@/types/data-table.types';
 
 import type { GroupOption, PackagePriceRow, ProductOption } from './FormFields';
 
@@ -271,7 +271,7 @@ export default function DentalPackagePricesIndex({
                 </div>
 
                 <div className="overflow-hidden rounded-[13.375px] border border-[#e2e8f0] bg-white">
-                    <table className="w-full text-left text-[13px]">
+                    <table className="responsive-cards w-full text-left text-[13px]">
                         <thead className="bg-[#f8fafc] text-[11px] tracking-wide text-[#64748b] uppercase">
                             <tr>
                                 <th className="px-4 py-3">#</th>
@@ -280,7 +280,9 @@ export default function DentalPackagePricesIndex({
                                 <th className="px-4 py-3">Package</th>
                                 <th className="px-4 py-3">Price</th>
                                 <th className="px-4 py-3">Updated</th>
-                                <th className="px-4 py-3 text-right">Actions</th>
+                                <th className="px-4 py-3 text-right">
+                                    Actions
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -299,16 +301,28 @@ export default function DentalPackagePricesIndex({
                                         key={row.id}
                                         className="border-t border-[#e2e8f0]"
                                     >
-                                        <td className="px-4 py-3 text-[#64748b]">
+                                        <td
+                                            data-label="#"
+                                            className="px-4 py-3 text-[#64748b]"
+                                        >
                                             {offset + index + 1}
                                         </td>
-                                        <td className="px-4 py-3 font-medium text-[#050315]">
+                                        <td
+                                            data-label="Product"
+                                            className="px-4 py-3 font-medium text-[#050315]"
+                                        >
                                             {row.product?.label ?? '—'}
                                         </td>
-                                        <td className="px-4 py-3 text-[#334155]">
+                                        <td
+                                            data-label="Material"
+                                            className="px-4 py-3 text-[#334155]"
+                                        >
                                             {row.material?.label ?? 'Any'}
                                         </td>
-                                        <td className="px-4 py-3 text-[#334155]">
+                                        <td
+                                            data-label="Package"
+                                            className="px-4 py-3 text-[#334155]"
+                                        >
                                             <div>{row.service_label}</div>
                                             {row.output_label ? (
                                                 <div className="text-[12px] text-[#64748b]">
@@ -316,13 +330,22 @@ export default function DentalPackagePricesIndex({
                                                 </div>
                                             ) : null}
                                         </td>
-                                        <td className="px-4 py-3 font-semibold text-[#050315]">
+                                        <td
+                                            data-label="Price"
+                                            className="px-4 py-3 font-semibold text-[#050315]"
+                                        >
                                             {money(row.price)}
                                         </td>
-                                        <td className="px-4 py-3 text-[#64748b]">
+                                        <td
+                                            data-label="Updated"
+                                            className="px-4 py-3 text-[#64748b]"
+                                        >
                                             {row.updated_at}
                                         </td>
-                                        <td className="px-4 py-3">
+                                        <td
+                                            data-label="Actions"
+                                            className="px-4 py-3"
+                                        >
                                             <div className="flex justify-end gap-2">
                                                 {canUpdate ? (
                                                     <Link

@@ -235,7 +235,7 @@ function PaymentsTab({
                     </div>
 
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[720px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[720px] border-collapse">
                             <thead>
                                 <tr className="bg-[#f9fafb]">
                                     {[
@@ -269,25 +269,43 @@ function PaymentsTab({
                                                 : 'border-t border-[#f3f4f6]',
                                         )}
                                     >
-                                        <td className="px-6 py-5 text-sm font-medium tracking-[-0.16px] text-[#050315]">
+                                        <td
+                                            data-label="Invoice #"
+                                            className="px-6 py-5 text-sm font-medium tracking-[-0.16px] text-[#050315]"
+                                        >
                                             {invoice.invoice}
                                         </td>
-                                        <td className="px-6 py-5 text-sm tracking-[-0.16px] text-[#475569]">
+                                        <td
+                                            data-label="Date"
+                                            className="px-6 py-5 text-sm tracking-[-0.16px] text-[#475569]"
+                                        >
                                             {invoice.date}
                                         </td>
-                                        <td className="px-6 py-5 text-sm tracking-[-0.16px] text-[#475569]">
+                                        <td
+                                            data-label="Period"
+                                            className="px-6 py-5 text-sm tracking-[-0.16px] text-[#475569]"
+                                        >
                                             {invoice.period}
                                         </td>
-                                        <td className="px-6 py-5 text-sm font-semibold tracking-[-0.16px] text-[#050315]">
+                                        <td
+                                            data-label="Amount"
+                                            className="px-6 py-5 text-sm font-semibold tracking-[-0.16px] text-[#050315]"
+                                        >
                                             {invoice.amount}
                                         </td>
-                                        <td className="px-6 py-5">
+                                        <td
+                                            data-label="Status"
+                                            className="px-6 py-5"
+                                        >
                                             <PortalStatusBadge
                                                 status={invoice.status}
                                                 tone={invoice.status_tone}
                                             />
                                         </td>
-                                        <td className="px-6 py-5">
+                                        <td
+                                            data-label="Actions"
+                                            className="px-6 py-5"
+                                        >
                                             <div className="flex items-center justify-end gap-4">
                                                 <button
                                                     type="button"
@@ -583,7 +601,7 @@ export default function Billing({
                     {activeTab === 'Invoices' ? (
                         <div className="overflow-hidden rounded-xl border border-[#e2e8f0] bg-white shadow-[0px_1px_1px_rgba(0,0,0,0.05)]">
                             <div className="overflow-x-auto">
-                                <table className="w-full min-w-[1000px] border-collapse">
+                                <table className="responsive-cards w-full min-w-[1000px] border-collapse">
                                     <thead>
                                         <tr className="border-b border-[#e2e8f0] bg-[#f8fafc]">
                                             {[
@@ -617,23 +635,41 @@ export default function Billing({
                                                             'border-t border-[#f1f5f9]',
                                                     )}
                                                 >
-                                                    <td className="px-6 py-4 text-sm font-medium text-[#050315]">
+                                                    <td
+                                                        data-label="Invoice #"
+                                                        className="px-6 py-4 text-sm font-medium text-[#050315]"
+                                                    >
                                                         {invoice.invoice}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm font-medium text-[#050315]">
+                                                    <td
+                                                        data-label="Case"
+                                                        className="px-6 py-4 text-sm font-medium text-[#050315]"
+                                                    >
                                                         {invoice.case_id}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-[#475569]">
+                                                    <td
+                                                        data-label="Description"
+                                                        className="px-6 py-4 text-sm text-[#475569]"
+                                                    >
                                                         {invoice.description}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm font-semibold text-[#050315]">
+                                                    <td
+                                                        data-label="Amount"
+                                                        className="px-6 py-4 text-sm font-semibold text-[#050315]"
+                                                    >
                                                         {invoice.amount}
                                                     </td>
-                                                    <td className="px-6 py-4 text-sm text-[#475569]">
+                                                    <td
+                                                        data-label="Due Date"
+                                                        className="px-6 py-4 text-sm text-[#475569]"
+                                                    >
                                                         {invoice.due_date ??
                                                             '—'}
                                                     </td>
-                                                    <td className="px-6 py-4">
+                                                    <td
+                                                        data-label="Status"
+                                                        className="px-6 py-4"
+                                                    >
                                                         <PortalStatusBadge
                                                             status={
                                                                 invoice.status
@@ -643,7 +679,10 @@ export default function Billing({
                                                             }
                                                         />
                                                     </td>
-                                                    <td className="px-6 py-4">
+                                                    <td
+                                                        data-label="Actions"
+                                                        className="px-6 py-4"
+                                                    >
                                                         <div className="flex items-center gap-2">
                                                             <button
                                                                 type="button"

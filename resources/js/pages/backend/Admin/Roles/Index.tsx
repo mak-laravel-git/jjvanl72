@@ -1,7 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
-import AdminLayout from '@/layouts/admin-layout';
 import {
     Select,
     SelectContent,
@@ -9,8 +8,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import AdminLayout from '@/layouts/admin-layout';
 import { cn } from '@/lib/utils';
-import { create, destroy, edit, index as rolesIndex } from '@/routes/admin/roles';
+import {
+    create,
+    destroy,
+    edit,
+    index as rolesIndex,
+} from '@/routes/admin/roles';
 import type { SharedData } from '@/types';
 
 const asset = (name: string) => `/images/admin-dashboard/${name}`;
@@ -186,9 +191,7 @@ export default function RolesIndex({ roles, filters }: Props) {
                     <Select
                         value={type || ALL_TYPES_VALUE}
                         onValueChange={(value) =>
-                            filterByType(
-                                value === ALL_TYPES_VALUE ? '' : value,
-                            )
+                            filterByType(value === ALL_TYPES_VALUE ? '' : value)
                         }
                     >
                         <SelectTrigger
@@ -209,7 +212,7 @@ export default function RolesIndex({ roles, filters }: Props) {
 
                 <div className="mt-[22.5px] overflow-hidden rounded-[13.375px] border border-[#e2e8f0] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[800px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[800px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[19px] py-[11px]">
@@ -246,7 +249,10 @@ export default function RolesIndex({ roles, filters }: Props) {
                                                     'border-b',
                                             )}
                                         >
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Role"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-[13.125px] font-semibold text-[#050315]">
                                                         {role.name}
@@ -258,13 +264,22 @@ export default function RolesIndex({ roles, filters }: Props) {
                                                     ) : null}
                                                 </div>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] text-[#475569]">
+                                            <td
+                                                data-label="Admins"
+                                                className="px-[19px] py-[14px] text-[13.125px] text-[#475569]"
+                                            >
                                                 {role.users_count}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]">
+                                            <td
+                                                data-label="Permissions"
+                                                className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]"
+                                            >
                                                 {role.permissions_count}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center justify-end gap-[1.875px]">
                                                     {canUpdate &&
                                                     role.is_super_admin ? (

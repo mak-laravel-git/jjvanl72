@@ -13,13 +13,13 @@ import {
 import AdminLayout from '@/layouts/admin-layout';
 import { cn } from '@/lib/utils';
 import {
-    create as materialsCreate,
     destroy,
+    create as materialsCreate,
     edit as materialsEdit,
     index as materialsIndex,
 } from '@/routes/admin/dental-materials';
-import type { PaginationData } from '@/types/data-table.types';
 import type { SharedData } from '@/types';
+import type { PaginationData } from '@/types/data-table.types';
 import type { MaterialRow, ProductOption } from './FormFields';
 
 const asset = (name: string) => `/images/admin-dashboard/${name}`;
@@ -74,9 +74,7 @@ export default function DentalMaterialsIndex({
                 sort_order: sort_by ? sort_order || 'asc' : undefined,
                 per_page: pagination.per_page,
                 page: pagination.current_page,
-                ...(statusFilter
-                    ? { 'filters[is_active]': statusFilter }
-                    : {}),
+                ...(statusFilter ? { 'filters[is_active]': statusFilter } : {}),
                 ...overrides,
             };
 
@@ -283,7 +281,7 @@ export default function DentalMaterialsIndex({
 
                 <div className="mt-[22.5px] overflow-hidden rounded-[13.375px] border border-[#e2e8f0] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[900px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[900px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[19px] py-[11px]">#</th>
@@ -330,8 +328,8 @@ export default function DentalMaterialsIndex({
                                             colSpan={7}
                                             className="px-[19px] py-10 text-center text-[13.125px] text-[#475569]"
                                         >
-                                            No dental materials match the current
-                                            filters.
+                                            No dental materials match the
+                                            current filters.
                                         </td>
                                     </tr>
                                 ) : (
@@ -344,10 +342,16 @@ export default function DentalMaterialsIndex({
                                                     'border-b',
                                             )}
                                         >
-                                            <td className="px-[19px] py-[14px] text-[11.25px] text-[#475569]">
+                                            <td
+                                                data-label="#"
+                                                className="px-[19px] py-[14px] text-[11.25px] text-[#475569]"
+                                            >
                                                 {offset + index + 1}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Color"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <span className="inline-flex items-center gap-2">
                                                     <span
                                                         className="size-5 shrink-0 rounded-[6px] border border-[#e2e8f0]"
@@ -362,7 +366,10 @@ export default function DentalMaterialsIndex({
                                                     </span>
                                                 </span>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]">
+                                            <td
+                                                data-label="Name"
+                                                className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]"
+                                            >
                                                 <div className="flex items-center gap-2.5">
                                                     {material.icon_url ? (
                                                         <img
@@ -380,7 +387,10 @@ export default function DentalMaterialsIndex({
                                                     <span>{material.name}</span>
                                                 </div>
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Products"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <button
                                                     type="button"
                                                     onClick={() =>
@@ -395,7 +405,10 @@ export default function DentalMaterialsIndex({
                                                         : `${material.products_count} product${material.products_count === 1 ? '' : 's'}`}
                                                 </button>
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Status"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <span
                                                     className={cn(
                                                         'rounded-full px-2.5 py-1 text-[11.25px] font-semibold',
@@ -407,10 +420,16 @@ export default function DentalMaterialsIndex({
                                                     {material.status}
                                                 </span>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] text-[#475569]">
+                                            <td
+                                                data-label="Updated"
+                                                className="px-[19px] py-[14px] text-[11.25px] text-[#475569]"
+                                            >
                                                 {material.updated_at}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center justify-end gap-[1.875px]">
                                                     <button
                                                         type="button"
@@ -508,13 +527,10 @@ export default function DentalMaterialsIndex({
                                         <button
                                             key={page}
                                             type="button"
-                                            onClick={() =>
-                                                navigate({ page })
-                                            }
+                                            onClick={() => navigate({ page })}
                                             className={cn(
                                                 'rounded-[9.375px] border px-[9px] py-[5px] text-[11.25px] font-semibold',
-                                                page ===
-                                                    pagination.current_page
+                                                page === pagination.current_page
                                                     ? 'border-[#0260bd] bg-[#0260bd] text-white'
                                                     : 'border-[#e2e8f0] bg-white text-[#475569]',
                                             )}
@@ -602,10 +618,7 @@ export default function DentalMaterialsIndex({
                                     </span>
                                 </div>
                             </div>
-                            <DetailField
-                                label="Name"
-                                value={viewTarget.name}
-                            />
+                            <DetailField label="Name" value={viewTarget.name} />
                             <DetailField
                                 label="Status"
                                 value={viewTarget.status}
@@ -642,7 +655,7 @@ export default function DentalMaterialsIndex({
                                 </p>
                             ) : (
                                 <div className="overflow-hidden rounded-[9.375px] border border-[#e2e8f0]">
-                                    <table className="w-full border-collapse">
+                                    <table className="responsive-cards w-full border-collapse">
                                         <thead>
                                             <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                                 <th className="px-3 py-2">
@@ -663,7 +676,10 @@ export default function DentalMaterialsIndex({
                                                         key={product.id}
                                                         className="border-b border-[#e2e8f0] last:border-b-0"
                                                     >
-                                                        <td className="px-3 py-2.5 text-[13.125px] text-[#050315]">
+                                                        <td
+                                                            data-label="Product"
+                                                            className="px-3 py-2.5 text-[13.125px] text-[#050315]"
+                                                        >
                                                             <span className="font-mono font-semibold text-[#0260bd]">
                                                                 {product.code}
                                                             </span>
@@ -671,7 +687,10 @@ export default function DentalMaterialsIndex({
                                                                 {product.name}
                                                             </span>
                                                         </td>
-                                                        <td className="px-3 py-2.5">
+                                                        <td
+                                                            data-label="Default"
+                                                            className="px-3 py-2.5"
+                                                        >
                                                             {product.is_default ? (
                                                                 <span className="rounded-full bg-[#0260bd] px-2 py-0.5 text-[10px] font-semibold text-white">
                                                                     Default
@@ -682,10 +701,11 @@ export default function DentalMaterialsIndex({
                                                                 </span>
                                                             )}
                                                         </td>
-                                                        <td className="px-3 py-2.5 text-[13.125px] text-[#475569]">
-                                                            {
-                                                                product.sort_order
-                                                            }
+                                                        <td
+                                                            data-label="Sort"
+                                                            className="px-3 py-2.5 text-[13.125px] text-[#475569]"
+                                                        >
+                                                            {product.sort_order}
                                                         </td>
                                                     </tr>
                                                 ),
@@ -797,10 +817,7 @@ function SortHeader({
     );
 }
 
-function buildPageNumbers(
-    current: number,
-    last: number,
-): Array<number | '…'> {
+function buildPageNumbers(current: number, last: number): Array<number | '…'> {
     if (last <= 1) {
         return last === 1 ? [1] : [];
     }

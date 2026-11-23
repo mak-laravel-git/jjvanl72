@@ -11,7 +11,10 @@ import {
 } from '@/components/ui/select';
 import AdminLayout from '@/layouts/admin-layout';
 import { cn } from '@/lib/utils';
-import { index as casesIndex, edit as editAdminCase } from '@/routes/admin/cases';
+import {
+    index as casesIndex,
+    edit as editAdminCase,
+} from '@/routes/admin/cases';
 import type { PaginationData } from '@/types/data-table.types';
 
 const asset = (name: string) => `/images/admin-dashboard/${name}`;
@@ -118,12 +121,8 @@ export default function AllCases({
                 per_page: pagination.per_page,
                 page: pagination.current_page,
                 ...(statusFilter ? { 'filters[status]': statusFilter } : {}),
-                ...(clientFilter
-                    ? { 'filters[client_id]': clientFilter }
-                    : {}),
-                ...(serviceFilter
-                    ? { 'filters[service]': serviceFilter }
-                    : {}),
+                ...(clientFilter ? { 'filters[client_id]': clientFilter } : {}),
+                ...(serviceFilter ? { 'filters[service]': serviceFilter } : {}),
                 ...overrides,
             };
 
@@ -328,7 +327,7 @@ export default function AllCases({
 
                 <div className="mt-[15px] overflow-hidden rounded-[13.375px] border border-[#e2e8f0] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[1100px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[1100px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[15px] py-[11px]">
@@ -381,10 +380,16 @@ export default function AllCases({
                                                     'border-b',
                                             )}
                                         >
-                                            <td className="px-[15px] py-4 font-mono text-[11.25px] font-bold text-[#0260bd]">
+                                            <td
+                                                data-label="Case ID"
+                                                className="px-[15px] py-4 font-mono text-[11.25px] font-bold text-[#0260bd]"
+                                            >
                                                 {item.id}
                                             </td>
-                                            <td className="px-[15px] py-3">
+                                            <td
+                                                data-label="Client / Patient"
+                                                className="px-[15px] py-3"
+                                            >
                                                 <p className="text-[13.125px] leading-[18.75px] font-semibold text-[#050315]">
                                                     {item.customer}
                                                 </p>
@@ -392,15 +397,24 @@ export default function AllCases({
                                                     {item.customer_date}
                                                 </p>
                                             </td>
-                                            <td className="px-[15px] py-4">
+                                            <td
+                                                data-label="Service"
+                                                className="px-[15px] py-4"
+                                            >
                                                 <span className="inline-flex rounded-full bg-[#f3f4f6] px-[7.5px] py-[1.5px] text-[11.25px] text-[#475569]">
                                                     {item.type}
                                                 </span>
                                             </td>
-                                            <td className="px-[15px] py-4 text-[13.125px] text-[#050315]">
+                                            <td
+                                                data-label="Product"
+                                                className="px-[15px] py-4 text-[13.125px] text-[#050315]"
+                                            >
                                                 {item.product}
                                             </td>
-                                            <td className="px-[15px] py-4">
+                                            <td
+                                                data-label="Designer"
+                                                className="px-[15px] py-4"
+                                            >
                                                 {item.designer ? (
                                                     <span className="text-[11.25px] text-[#475569]">
                                                         {item.designer}
@@ -412,7 +426,10 @@ export default function AllCases({
                                                     />
                                                 )}
                                             </td>
-                                            <td className="px-[15px] py-4">
+                                            <td
+                                                data-label="Manufacturer"
+                                                className="px-[15px] py-4"
+                                            >
                                                 {item.manufacturer ? (
                                                     <span className="text-[11.25px] text-[#475569]">
                                                         {item.manufacturer}
@@ -423,20 +440,23 @@ export default function AllCases({
                                                     </span>
                                                 )}
                                             </td>
-                                            <td className="px-[15px] py-4">
+                                            <td
+                                                data-label="Status"
+                                                className="px-[15px] py-4"
+                                            >
                                                 <span
                                                     className={cn(
                                                         'inline-flex rounded-full border px-[7.5px] py-[1.5px] text-[11.25px]',
                                                         statusClasses[
                                                             item.status_tone
-                                                        ] ??
-                                                            statusClasses.gray,
+                                                        ] ?? statusClasses.gray,
                                                     )}
                                                 >
                                                     {item.status}
                                                 </span>
                                             </td>
                                             <td
+                                                data-label="Due Date"
                                                 className={cn(
                                                     'px-[15px] py-4 text-[11.25px]',
                                                     item.due_overdue
@@ -446,7 +466,10 @@ export default function AllCases({
                                             >
                                                 {item.due_date}
                                             </td>
-                                            <td className="px-[15px] py-4">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-[15px] py-4"
+                                            >
                                                 <div className="flex items-center gap-[1.875px]">
                                                     <button
                                                         type="button"
@@ -517,13 +540,10 @@ export default function AllCases({
                                         <button
                                             key={page}
                                             type="button"
-                                            onClick={() =>
-                                                navigate({ page })
-                                            }
+                                            onClick={() => navigate({ page })}
                                             className={cn(
                                                 'min-w-8 rounded-[6px] px-2.5 py-1.5 text-[11.25px]',
-                                                page ===
-                                                    pagination.current_page
+                                                page === pagination.current_page
                                                     ? 'bg-[#0260bd] text-white'
                                                     : 'border border-[#e2e8f0] text-[#475569]',
                                             )}
@@ -567,10 +587,7 @@ export default function AllCases({
     );
 }
 
-function buildPageNumbers(
-    current: number,
-    last: number,
-): Array<number | '…'> {
+function buildPageNumbers(current: number, last: number): Array<number | '…'> {
     if (last <= 1) {
         return last === 1 ? [1] : [];
     }
