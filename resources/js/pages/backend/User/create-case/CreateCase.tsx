@@ -138,6 +138,7 @@ export default function CreateCasePage({
     const [toast, setToast] = useState<string | null>(null);
     const [leftPanelOpen, setLeftPanelOpen] = useState(true);
     const [rightPanelOpen, setRightPanelOpen] = useState(true);
+    const wasPhoneViewportRef = useRef<boolean | null>(null);
     const [lastAbutmentItem, setLastAbutmentItem] =
         useState<PrescriptionItem | null>(null);
     const [bridgeMode, setBridgeMode] = useState(false);
@@ -248,6 +249,86 @@ export default function CreateCasePage({
     const showToast = useCallback((message: string) => {
         setToast(message);
         window.setTimeout(() => setToast(null), 2800);
+    }, []);
+
+    const isPhoneViewport = useCallback((): boolean => {
+        return (
+            typeof window !== 'undefined' &&
+            Boolean(window.matchMedia?.('(max-width: 767px)').matches)
+        );
+    }, []);
+
+    // Phone: step-by-step sheets. Tablet/desktop: always both open.
+    const openPanelsForFlow = useCallback(
+        (left: boolean, right: boolean) => {
+            if (isPhoneViewport()) {
+                setLeftPanelOpen(left);
+                setRightPanelOpen(right);
+
+                return;
+            }
+
+            setLeftPanelOpen(true);
+            setRightPanelOpen(true);
+        },
+        [isPhoneViewport],
+    );
+
+    // Phone only: close sheets so the tooth chart is usable again.
+    const showTeethChartOnPhone = useCallback(() => {
+        if (isPhoneViewport()) {
+            setLeftPanelOpen(false);
+            setRightPanelOpen(false);
+        }
+    }, [isPhoneViewport]);
+
+    // Phone (≤767): start with drawers closed so the chart is visible.
+    // Tablet/desktop keep both open. Only sync when crossing the breakpoint.
+    useEffect(() => {
+        if (typeof window === 'undefined' || !window.matchMedia) {
+            return;
+        }
+
+        const media = window.matchMedia('(max-width: 767px)');
+
+        const syncPanelsForViewport = (isPhone: boolean) => {
+            const wasPhone = wasPhoneViewportRef.current;
+
+            if (wasPhone === isPhone) {
+                return;
+            }
+
+            wasPhoneViewportRef.current = isPhone;
+
+            if (isPhone) {
+                setLeftPanelOpen(false);
+                setRightPanelOpen(false);
+
+                return;
+            }
+
+            // Leaving phone: restore tablet/desktop default of both open.
+            if (wasPhone === true) {
+                setLeftPanelOpen(true);
+                setRightPanelOpen(true);
+            }
+        };
+
+        syncPanelsForViewport(media.matches);
+
+        const onChange = (event: MediaQueryListEvent) => {
+            syncPanelsForViewport(event.matches);
+        };
+
+        if (typeof media.addEventListener === 'function') {
+            media.addEventListener('change', onChange);
+
+            return () => media.removeEventListener('change', onChange);
+        }
+
+        media.addListener(onChange);
+
+        return () => media.removeListener(onChange);
     }, []);
 
     useEffect(() => {
@@ -588,8 +669,12 @@ export default function CreateCasePage({
                     setSelectedArch('');
                     setCurrentTooth(tooth);
                     setAutoFilledTeeth([]);
-                    setLeftPanelOpen(true);
-                    setRightPanelOpen(true);
+                    // Phone + Multi-select: keep the chart open so more teeth
+                    // can be tapped; open Products / Case details manually.
+                    // Tablet/desktop still open both panels as before.
+                    if (!(isPhoneViewport() && multiSelect)) {
+                        openPanelsForFlow(true, false);
+                    }
 
                     return;
                 }
@@ -598,8 +683,7 @@ export default function CreateCasePage({
                 setSelectedArch('');
                 setCurrentTooth(tooth);
                 setAutoFilledTeeth([]);
-                setLeftPanelOpen(true);
-                setRightPanelOpen(true);
+                openPanelsForFlow(true, false);
                 setScreen('catalog');
 
                 return;
@@ -623,7 +707,9 @@ export default function CreateCasePage({
             bridgeMode,
             draft,
             copySource,
+            isPhoneViewport,
             multiSelect,
+            openPanelsForFlow,
             replicateOnto,
             screen,
             selectedArch,
@@ -996,6 +1082,7 @@ export default function CreateCasePage({
 
                 resetWorking();
                 setScreen('project');
+                showTeethChartOnPhone();
                 showToast('Prescription item saved.');
                 openFilesModal(nextItems);
 
@@ -1049,6 +1136,7 @@ export default function CreateCasePage({
                     setLastAbutmentItem(item);
                     resetWorking();
                     setScreen('project');
+                    showTeethChartOnPhone();
                     showToast(
                         'Bridge needs a retainer and a pontic on the same arch.',
                     );
@@ -1063,6 +1151,7 @@ export default function CreateCasePage({
 
             resetWorking();
             setScreen('project');
+            showTeethChartOnPhone();
             showToast('Prescription item saved. Continue selecting on the arches.');
         },
         [
@@ -1075,6 +1164,7 @@ export default function CreateCasePage({
             resetWorking,
             selectedArch,
             selectedMaterial,
+            showTeethChartOnPhone,
             showToast,
             startBridgeAdjust,
             workingConfig,
@@ -1099,11 +1189,10 @@ export default function CreateCasePage({
             setActiveProductKey(key);
             setWorkingConfig(defaultConfig(key, product, '', null));
             setSelectedMaterial('');
-            setLeftPanelOpen(true);
-            setRightPanelOpen(true);
+            openPanelsForFlow(false, false);
             setScreen('material');
         },
-        [catalog, selectedArch, showToast, workingTeeth],
+        [catalog, openPanelsForFlow, selectedArch, showToast, workingTeeth],
     );
 
     const handleSelectMaterial = useCallback(
@@ -1135,8 +1224,12 @@ export default function CreateCasePage({
                     material?.id ?? null,
                 ),
             );
+
+            if (isPhoneViewport()) {
+                setRightPanelOpen(true);
+            }
         },
-        [activeProductKey, catalog],
+        [activeProductKey, catalog, isPhoneViewport],
     );
 
     const handleEditItem = useCallback(
