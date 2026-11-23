@@ -277,7 +277,28 @@ export default function ToothChart({
     const [internalBrokenEdges, setInternalBrokenEdges] = useState<Set<string>>(
         () => new Set(),
     );
+    const [isPhoneViewport, setIsPhoneViewport] = useState(false);
     const isControlled = onBrokenEdgesChange !== undefined;
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || !window.matchMedia) {
+            return;
+        }
+
+        const media = window.matchMedia('(max-width: 767px)');
+        const sync = () => setIsPhoneViewport(media.matches);
+        sync();
+
+        if (typeof media.addEventListener === 'function') {
+            media.addEventListener('change', sync);
+
+            return () => media.removeEventListener('change', sync);
+        }
+
+        media.addListener(sync);
+
+        return () => media.removeListener(sync);
+    }, []);
     const brokenEdges = useMemo(
         () =>
             isControlled
@@ -496,39 +517,52 @@ export default function ToothChart({
         <section className="chart-area">
             <div className="chart-toolbar">
                 {forceConnectors ? (
-                    <span>
-                        Click green mid-dots to break or restore bridge links
-                        (cantilever OK with one retainer)
+                    <span className="chart-toolbar-hint">
+                        {isPhoneViewport
+                            ? 'Tap green mid-dots to break or restore bridge links'
+                            : 'Click green mid-dots to break or restore bridge links (cantilever OK with one retainer)'}
                     </span>
                 ) : selectionEnabled ? (
                     <>
-                        <span>Patient</span>
-                        <button
-                            type="button"
-                            className={cn('toggle', multiSelect && 'on')}
-                            title="Multi-select"
-                            onClick={onMultiSelectToggle}
-                        />
-                        <span>Multi-select</span>
+                        <div className="chart-toolbar-controls">
+                            <span>Patient</span>
+                            <button
+                                type="button"
+                                className={cn('toggle', multiSelect && 'on')}
+                                title="Multi-select"
+                                onClick={onMultiSelectToggle}
+                            />
+                            <span>Multi-select</span>
+                        </div>
                         {workingTeeth.length > 0 ? (
                             <span className="chart-toolbar-hint">
                                 Selected {workingTeeth.length}{' '}
                                 {workingTeeth.length === 1 ? 'tooth' : 'teeth'}
                                 {!configurationScreen
-                                    ? ' — pick a product in the left panel'
+                                    ? isPhoneViewport
+                                        ? ' — open Products to pick one'
+                                        : ' — pick a product in the left panel'
                                     : ''}
                             </span>
                         ) : (
                             <span className="chart-toolbar-hint">
                                 {configurationScreen
-                                    ? 'Ctrl / Cmd + click to add or remove a tooth · Shift + click to add a range'
-                                    : copyHint
+                                    ? isPhoneViewport
+                                        ? 'Tap teeth to add or remove from the selection'
+                                        : 'Ctrl / Cmd + click to add or remove a tooth · Shift + click to add a range'
+                                    : copyHint && !isPhoneViewport
                                       ? copyHint
                                       : multiSelect
-                                        ? 'Multi-select ON — click teeth to add (they turn red), then pick a product'
+                                        ? isPhoneViewport
+                                            ? 'Multi-select ON — tap teeth, then open Products'
+                                            : 'Multi-select ON — click teeth to add (they turn red), then pick a product'
                                         : manualJoinEdges.length > 0
-                                          ? 'Green dots join crown/pontic into a bridge; or click a tooth / Multi-select'
-                                          : 'Turn Multi-select ON (or Ctrl / Cmd / Shift + click), then click teeth'}
+                                          ? isPhoneViewport
+                                              ? 'Tap green dots to join crown/pontic, or tap a tooth / Multi-select'
+                                              : 'Green dots join crown/pontic into a bridge; or click a tooth / Multi-select'
+                                          : isPhoneViewport
+                                            ? 'Turn Multi-select ON, then tap teeth'
+                                            : 'Turn Multi-select ON (or Ctrl / Cmd / Shift + click), then click teeth'}
                             </span>
                         )}
                         {!configurationScreen && canJoinSelectionAsBridge ? (
@@ -542,7 +576,7 @@ export default function ToothChart({
                         ) : null}
                     </>
                 ) : (
-                    <span>
+                    <span className="chart-toolbar-hint">
                         Enter patient name and due date before selecting teeth
                     </span>
                 )}
