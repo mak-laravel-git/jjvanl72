@@ -2,6 +2,7 @@
 
 use App\Enums\UserAvailability;
 use App\Jobs\SendEmailJob;
+use App\Models\DentalClient;
 use App\Models\User;
 use App\Services\EmailChangeService;
 use App\Support\AppPermissions;
@@ -14,6 +15,12 @@ use Inertia\Testing\AssertableInertia as Assert;
 function createDentist(array $overrides = []): User
 {
     test()->seed(RolePermissionSeeder::class);
+
+    if (! array_key_exists('client_id', $overrides)) {
+        $overrides['client_id'] = DentalClient::factory()->create([
+            'name' => 'SmileWorks Dental Clinic',
+        ])->id;
+    }
 
     $dentist = User::factory()->create(array_merge([
         'name' => 'Dr. Sarah Mitchell',
@@ -40,6 +47,8 @@ test('dentist can view dynamic profile settings', function () {
             ->where('profile.email', 'dentist-profile@dev.com')
             ->where('profile.phone', '+1 512-555-0142')
             ->where('profile.location', 'Austin, TX')
+            ->where('profile.business_name', 'SmileWorks Dental Clinic')
+            ->where('profile.can_manage_business_name', true)
             ->where('profile.role_label', AppPermissions::DENTIST_ROLE)
             ->where('profile.availability', UserAvailability::Available->value)
             ->where('profile.notification_preferences.push_notifications', true)
@@ -59,6 +68,7 @@ test('dentist can update profile details without changing email', function () {
         ->post(route('user-profile.update'), [
             'name' => 'Dr. Updated Mitchell',
             'email' => $dentist->email,
+            'business_name' => 'Updated Smile Clinic',
             'phone' => '+1 555-0199',
             'location' => 'Dallas, TX',
             'availability' => UserAvailability::Available->value,
@@ -72,6 +82,7 @@ test('dentist can update profile details without changing email', function () {
     expect($dentist->email)->toBe('dentist-profile@dev.com');
     expect($dentist->phone)->toBe('+1 555-0199');
     expect($dentist->location)->toBe('Dallas, TX');
+    expect($dentist->client?->name)->toBe('Updated Smile Clinic');
 });
 
 test('dentist can update availability and notification preferences', function () {
@@ -85,6 +96,7 @@ test('dentist can update availability and notification preferences', function ()
         ->post(route('user-profile.update'), [
             'name' => $dentist->name,
             'email' => $dentist->email,
+            'business_name' => 'SmileWorks Dental Clinic',
             'availability' => UserAvailability::Busy->value,
             'notification_preferences' => $preferences,
         ])
@@ -106,6 +118,7 @@ test('dentist can update password with current password', function () {
         ->post(route('user-profile.update'), [
             'name' => $dentist->name,
             'email' => $dentist->email,
+            'business_name' => 'SmileWorks Dental Clinic',
             'availability' => UserAvailability::Available->value,
             'current_password' => 'password',
             'password' => 'new-password',
@@ -125,11 +138,27 @@ test('dentist password update requires the current password', function () {
         ->post(route('user-profile.update'), [
             'name' => $dentist->name,
             'email' => $dentist->email,
+            'business_name' => 'SmileWorks Dental Clinic',
             'availability' => UserAvailability::Available->value,
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
         ])
         ->assertSessionHasErrors('current_password')
+        ->assertRedirect(route('user-profile.edit'));
+});
+
+test('dentist profile update requires business name when linked to a client', function () {
+    $dentist = createDentist();
+
+    $this->actingAs($dentist)
+        ->from(route('user-profile.edit'))
+        ->post(route('user-profile.update'), [
+            'name' => $dentist->name,
+            'email' => $dentist->email,
+            'business_name' => '',
+            'availability' => UserAvailability::Available->value,
+        ])
+        ->assertSessionHasErrors('business_name')
         ->assertRedirect(route('user-profile.edit'));
 });
 
@@ -288,6 +317,7 @@ test('portal email change keeps current email and queues verification', function
         ->post(route('user-profile.update'), [
             'name' => 'Dr. Updated Mitchell',
             'email' => 'new-dentist@dev.com',
+            'business_name' => 'SmileWorks Dental Clinic',
             'phone' => '+1 555-0199',
             'location' => 'Dallas, TX',
             'availability' => UserAvailability::Available->value,

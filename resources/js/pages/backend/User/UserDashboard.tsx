@@ -163,14 +163,15 @@ function SubmitterDashboard() {
                                 Dashboard
                             </h1>
                             <p className="text-base leading-[22px] tracking-[-0.18px] text-[#475569]">
-                                Welcome back, {user?.name}
+                                Welcome back,{' '}
+                                {user?.business_name || user?.name}
                             </p>
                         </div>
 
                         {showPrimaryAction && (
                             <Link
                                 href={view.primaryAction?.href ?? create.url()}
-                                {...(view.primaryAction?.openInNewTab !== false
+                                {...(view.primaryAction?.openInNewTab
                                     ? {
                                           target: '_blank',
                                           rel: 'noopener noreferrer',

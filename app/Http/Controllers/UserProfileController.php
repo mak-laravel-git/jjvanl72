@@ -24,6 +24,7 @@ class UserProfileController extends Controller
     {
         /** @var User $user */
         $user = $request->user();
+        $user->loadMissing('client');
 
         return Inertia::render('backend/User/ProfileSettings', [
             'profile' => [
@@ -31,6 +32,8 @@ class UserProfileController extends Controller
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'location' => $user->location,
+                'business_name' => $user->client?->name,
+                'can_manage_business_name' => $user->client_id !== null,
                 'company_name' => $user->company_name,
                 'business_registration' => $user->business_registration,
                 'production_capacity' => $user->production_capacity,
@@ -55,7 +58,7 @@ class UserProfileController extends Controller
         $data = $request->validated();
 
         $payload = collect($data)
-            ->except(['password', 'password_confirmation', 'current_password', 'avatar', 'remove_avatar', 'email'])
+            ->except(['password', 'password_confirmation', 'current_password', 'avatar', 'remove_avatar', 'email', 'business_name'])
             ->all();
 
         if (array_key_exists('notification_preferences', $payload)) {
@@ -94,6 +97,13 @@ class UserProfileController extends Controller
         $user->fill($payload);
         $user->save();
         $user->searchable();
+
+        if ($user->client_id !== null && array_key_exists('business_name', $data)) {
+            $user->loadMissing('client');
+            $user->client?->update([
+                'name' => trim((string) $data['business_name']),
+            ]);
+        }
 
         if ($emailChanged) {
             $this->emailChange->start($user, $requestedEmail);

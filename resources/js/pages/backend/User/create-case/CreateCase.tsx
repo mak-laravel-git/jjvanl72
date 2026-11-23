@@ -11,7 +11,9 @@ import {
 import AdminLayout from '@/layouts/admin-layout';
 import PortalLayout from '@/layouts/portal-layout';
 import { cn } from '@/lib/utils';
+import { dashboard } from '@/routes';
 import {
+    index as adminCasesIndex,
     update as adminUpdate,
 } from '@/routes/admin/cases';
 import { store, update } from '@/routes/cases';
@@ -1205,6 +1207,10 @@ export default function CreateCasePage({
         );
     }, []);
 
+    const leaveCreateCase = useCallback(() => {
+        router.visit(adminMode ? adminCasesIndex.url() : dashboard.url());
+    }, [adminMode]);
+
     const goBack = useCallback(() => {
         if (screen === 'material') {
             setScreen('catalog');
@@ -1215,8 +1221,12 @@ export default function CreateCasePage({
         if (screen === 'catalog') {
             resetWorking();
             setScreen('project');
+
+            return;
         }
-    }, [resetWorking, screen]);
+
+        leaveCreateCase();
+    }, [leaveCreateCase, resetWorking, screen]);
 
     const handleReview = useCallback(() => {
         if (!draft.patientName.trim()) {
@@ -1396,6 +1406,7 @@ export default function CreateCasePage({
                                     description={draft.description}
                                     itemCount={draft.items.length}
                                     caseId={draft.id}
+                                    onBack={leaveCreateCase}
                                     onClientChange={(selected) =>
                                         setDraft((previous) => ({
                                             ...previous,

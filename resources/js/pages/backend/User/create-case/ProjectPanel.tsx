@@ -1,4 +1,4 @@
-import { IconCalendar, IconExpand, IconInfo, IconNote } from './icons';
+import { IconBack, IconCalendar, IconExpand, IconInfo, IconNote } from './icons';
 import { FloatingField, FloatingInput } from './Field';
 import { currentDateText } from './helpers';
 import type { AssignedClient } from './types';
@@ -11,6 +11,7 @@ type ProjectPanelProps = {
     description: string;
     itemCount: number;
     caseId: string;
+    onBack: () => void;
     onClientChange: (client: AssignedClient | null) => void;
     onChange: (
         field: 'patientName' | 'dueDate' | 'description',
@@ -47,14 +48,24 @@ export default function ProjectPanel({
     description,
     itemCount,
     caseId,
+    onBack,
     onClientChange,
     onChange,
 }: ProjectPanelProps) {
     return (
         <>
             <div className="flow-help">
+                <button
+                    type="button"
+                    className="flow-help-back"
+                    title="Back to dashboard"
+                    aria-label="Back to dashboard"
+                    onClick={onBack}
+                >
+                    <IconBack />
+                </button>
                 <IconInfo />
-                {projectHelpText(patientName, dueDate, itemCount, caseId)}
+                <span>{projectHelpText(patientName, dueDate, itemCount, caseId)}</span>
             </div>
 
             <section className="panel-card">

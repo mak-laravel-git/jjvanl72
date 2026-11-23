@@ -57,6 +57,7 @@ class HandleInertiaRequests extends Middleware
                     ]),
                     [
                         'name' => $this->displayName($user),
+                        'business_name' => $this->businessName($user),
                         'roles' => $roles,
                         'role' => $roles[0] ?? null,
                         'role_label' => $user->role_label,
@@ -90,8 +91,25 @@ class HandleInertiaRequests extends Middleware
         ];
     }
 
-    private function displayName($user): string
+    private function displayName(User $user): string
     {
         return ! empty($user->name) ? $user->name : $user->email;
+    }
+
+    private function businessName(User $user): ?string
+    {
+        $user->loadMissing('client');
+
+        $clientName = $user->client?->name;
+
+        if (is_string($clientName) && trim($clientName) !== '') {
+            return trim($clientName);
+        }
+
+        if (is_string($user->company_name) && trim($user->company_name) !== '') {
+            return trim($user->company_name);
+        }
+
+        return null;
     }
 }
