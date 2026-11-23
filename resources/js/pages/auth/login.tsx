@@ -530,6 +530,12 @@ function RegisterPane({
                     </CompactField>
                 </div>
 
+                <p className="text-[0.7rem] leading-snug text-primary-600/75">
+                    Password must be at least 8 characters and include uppercase
+                    and lowercase letters, a number, and a symbol. Avoid
+                    passwords found in known data breaches.
+                </p>
+
                 <Button
                     type="submit"
                     className="h-11 w-full rounded-xl bg-gradient-to-r from-primary-500 via-primary-400 to-primary-600 text-sm font-semibold tracking-wide text-white shadow-md transition hover:brightness-110"

@@ -52,6 +52,8 @@ type ProfileData = {
     email: string;
     phone: string | null;
     location: string | null;
+    business_name: string | null;
+    can_manage_business_name: boolean;
     company_name: string | null;
     business_registration: string | null;
     production_capacity: number | null;
@@ -115,6 +117,9 @@ function DynamicPortalProfileSettings({
 
     const [name, setName] = useState(profile.name);
     const [email, setEmail] = useState(profile.email);
+    const [businessName, setBusinessName] = useState(
+        profile.business_name ?? '',
+    );
     const [phone, setPhone] = useState(profile.phone ?? '');
     const [location, setLocation] = useState(profile.location ?? '');
     const [availability, setAvailability] = useState<AvailabilityStatus>(
@@ -275,7 +280,9 @@ function DynamicPortalProfileSettings({
                                         {profile.role_label}
                                     </p>
                                     <p className="mt-1 text-center text-xs leading-4 text-[#64748b]">
-                                        {organization}
+                                        {profile.can_manage_business_name
+                                            ? businessName || organization
+                                            : organization}
                                     </p>
                                 </aside>
 
@@ -328,6 +335,29 @@ function DynamicPortalProfileSettings({
                                                     </span>
                                                 ) : null}
                                             </Field>
+                                            {profile.can_manage_business_name ? (
+                                                <Field
+                                                    id="business_name"
+                                                    label="Business name"
+                                                    error={errors.business_name}
+                                                >
+                                                    <input
+                                                        id="business_name"
+                                                        name="business_name"
+                                                        type="text"
+                                                        required
+                                                        value={businessName}
+                                                        onChange={(event) =>
+                                                            setBusinessName(
+                                                                event.target
+                                                                    .value,
+                                                            )
+                                                        }
+                                                        placeholder="Smile Dental Clinic"
+                                                        className={inputClass}
+                                                    />
+                                                </Field>
+                                            ) : null}
                                         </div>
                                     </Section>
 

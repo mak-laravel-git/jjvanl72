@@ -6,6 +6,8 @@ import {
     getPortalView,
     portalAsset,
 } from '@/lib/portal-role';
+import { show as twoFactorShow } from '@/routes/two-factor';
+import { edit as userProfileEdit } from '@/routes/user-profile';
 import type { SharedData } from '@/types';
 
 type PortalHeaderProps = {
@@ -13,16 +15,23 @@ type PortalHeaderProps = {
 };
 
 export function PortalHeader({ notificationCount = 4 }: PortalHeaderProps) {
-    const { auth } = usePage<SharedData>().props;
+    const { auth, features } = usePage<SharedData>().props;
     const view = getPortalView(auth.user);
     const notificationHref = getNotificationHref(auth.user);
+    const organization = auth.user?.business_name || view.organization;
 
     return (
         <DashboardHeader
-            organization={view.organization}
+            organization={organization}
             bellIcon={portalAsset('icon-bell.svg')}
             notificationCount={notificationCount}
             notificationHref={notificationHref}
+            profileHref={userProfileEdit.url()}
+            twoFactorHref={
+                features?.canUseTwoFactorAuthentication
+                    ? twoFactorShow.url()
+                    : null
+            }
         />
     );
 }

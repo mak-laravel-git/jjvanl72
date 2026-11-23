@@ -40,6 +40,22 @@ class UpdateUserProfileRequest extends FormRequest
                 $this->merge([$field => null]);
             }
         }
+
+        if ($this->has('business_name') && is_string($this->input('business_name'))) {
+            $this->merge([
+                'business_name' => trim($this->input('business_name')),
+            ]);
+        }
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'business_name.required' => 'Enter your business name.',
+        ];
     }
 
     /**
@@ -61,6 +77,12 @@ class UpdateUserProfileRequest extends FormRequest
             ],
             'phone' => ['nullable', 'string', 'max:50'],
             'location' => ['nullable', 'string', 'max:255'],
+            'business_name' => [
+                Rule::excludeIf($user->client_id === null),
+                'required',
+                'string',
+                'max:160',
+            ],
             'company_name' => ['nullable', 'string', 'max:255'],
             'business_registration' => ['nullable', 'string', 'max:255'],
             'production_capacity' => ['nullable', 'integer', 'min:0', 'max:65535'],
