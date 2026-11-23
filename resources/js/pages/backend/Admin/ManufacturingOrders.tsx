@@ -160,7 +160,7 @@ export default function ManufacturingOrders({
                                             {order.due_date}
                                         </td>
                                         <td
-                                            data-label="Actions"
+                                            data-actions
                                             className="px-[19px] py-4"
                                         >
                                             <div className="flex items-center gap-2">

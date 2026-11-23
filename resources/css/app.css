@@ -594,6 +594,29 @@
         color: #64748b;
     }
 
+    /*
+     * Opt-in action cell: no label, full card width, buttons share the row
+     * equally. Use `data-actions` on the <td> instead of `data-label`.
+     */
+    table.responsive-cards tbody td[data-actions] {
+        padding: 12px 0 8px !important;
+        border-bottom: 0;
+    }
+
+    table.responsive-cards tbody td[data-actions] > div {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+    }
+
+    table.responsive-cards tbody td[data-actions] > div > * {
+        flex: 1 1 0;
+        justify-content: center;
+        padding-top: 9px;
+        padding-bottom: 9px;
+        white-space: nowrap;
+    }
+
     /* Cells without a label (empty states, colSpan rows) use the full width. */
     table.responsive-cards tbody td:not([data-label]) {
         padding-left: 0 !important;
