@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 
 import { RegisterWebPush } from '@/components/register-web-push';
+import { MobileSidebarProvider } from '@/layouts/partials/dashboard/mobile-sidebar-context';
 
 interface DashboardLayoutProps {
     sidebar?: ReactNode;
@@ -34,21 +35,23 @@ export default function DashboardLayout({
     }
 
     return (
-        <div
-            className="min-h-screen font-jakarta"
-            style={
-                {
-                    '--dashboard-sidebar-width': sidebarWidth,
-                    backgroundColor: background,
-                } as CSSProperties
-            }
-        >
-            <RegisterWebPush />
-            {sidebar}
-            <div className="flex min-h-screen min-w-0 flex-col md:pl-(--dashboard-sidebar-width)">
-                {header}
-                <main className="flex-1 pt-16">{children}</main>
+        <MobileSidebarProvider>
+            <div
+                className="min-h-screen font-jakarta"
+                style={
+                    {
+                        '--dashboard-sidebar-width': sidebarWidth,
+                        backgroundColor: background,
+                    } as CSSProperties
+                }
+            >
+                <RegisterWebPush />
+                {sidebar}
+                <div className="flex min-h-screen min-w-0 flex-col md:pl-(--dashboard-sidebar-width)">
+                    {header}
+                    <main className="flex-1 pt-14 sm:pt-16">{children}</main>
+                </div>
             </div>
-        </div>
+        </MobileSidebarProvider>
     );
 }

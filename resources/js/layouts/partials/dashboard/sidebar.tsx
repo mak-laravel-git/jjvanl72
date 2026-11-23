@@ -2,6 +2,14 @@ import { Link, router, usePage } from '@inertiajs/react';
 import { ChevronDown } from 'lucide-react';
 import { Fragment, useState } from 'react';
 
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+} from '@/components/ui/sheet';
+import { useMobileSidebar } from '@/layouts/partials/dashboard/mobile-sidebar-context';
 import { cn } from '@/lib/utils';
 import { logout } from '@/routes';
 import type { SharedData } from '@/types';
@@ -81,6 +89,7 @@ export function DashboardSidebar({
     const permissions =
         page.props.auth.user?.permissions ?? page.props.auth.permissions ?? [];
     const styles = densityStyles[density];
+    const { open, setOpen } = useMobileSidebar();
 
     const visibleItems = items
         .filter(
@@ -96,30 +105,105 @@ export function DashboardSidebar({
         .filter((item) => !item.children || item.children.length > 0);
 
     const handleLogout = () => {
+        setOpen(false);
         router.post(logout.url());
     };
 
+    const closeMobile = () => setOpen(false);
+
     return (
-        <aside className="fixed inset-y-0 left-0 z-40 hidden w-(--dashboard-sidebar-width) flex-col border-r border-[#e5e7eb] bg-white md:flex">
-            <div className="flex items-center border-b border-[#e2e8f0] px-6 py-3">
+        <>
+            <aside className="fixed inset-y-0 left-0 z-40 hidden w-(--dashboard-sidebar-width) flex-col border-r border-[#e5e7eb] bg-white md:flex">
+                <SidebarBody
+                    items={visibleItems}
+                    logoutIcon={logoutIcon}
+                    styles={styles}
+                    url={url}
+                    onLogout={handleLogout}
+                />
+            </aside>
+
+            <Sheet open={open} onOpenChange={setOpen}>
+                <SheetContent
+                    side="left"
+                    showCloseButton
+                    className="w-[min(100%,16.5rem)] gap-0 border-[#e5e7eb] p-0 sm:max-w-[16.5rem] md:hidden"
+                >
+                    <SheetHeader className="sr-only">
+                        <SheetTitle>Navigation</SheetTitle>
+                        <SheetDescription>
+                            Portal navigation menu
+                        </SheetDescription>
+                    </SheetHeader>
+                    <SidebarBody
+                        items={visibleItems}
+                        logoutIcon={logoutIcon}
+                        styles={styles}
+                        url={url}
+                        onLogout={handleLogout}
+                        onNavigate={closeMobile}
+                        compactLogo
+                    />
+                </SheetContent>
+            </Sheet>
+        </>
+    );
+}
+
+type NavItemStyles = (typeof densityStyles)[DashboardSidebarDensity];
+
+function SidebarBody({
+    items,
+    logoutIcon,
+    styles,
+    url,
+    onLogout,
+    onNavigate,
+    compactLogo = false,
+}: {
+    items: DashboardNavItem[];
+    logoutIcon: string;
+    styles: NavItemStyles;
+    url: string;
+    onLogout: () => void;
+    onNavigate?: () => void;
+    compactLogo?: boolean;
+}) {
+    return (
+        <div className="flex h-full flex-col bg-white">
+            <div
+                className={cn(
+                    'flex items-center border-b border-[#e2e8f0]',
+                    compactLogo ? 'px-4 py-3' : 'px-6 py-3',
+                )}
+            >
                 <img
                     src={logoSrc}
                     alt="Rad Dental"
-                    className="h-10 w-auto max-w-full object-contain"
+                    className={cn(
+                        'w-auto max-w-full object-contain',
+                        compactLogo ? 'h-7' : 'h-10',
+                    )}
                 />
             </div>
 
             <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-2">
-                {visibleItems.map((item) => (
+                {items.map((item) => (
                     <Fragment key={item.title}>
                         {item.children ? (
                             <CollapsibleNavItem
                                 item={item}
                                 url={url}
                                 styles={styles}
+                                onNavigate={onNavigate}
                             />
                         ) : (
-                            <NavLink item={item} url={url} styles={styles} />
+                            <NavLink
+                                item={item}
+                                url={url}
+                                styles={styles}
+                                onNavigate={onNavigate}
+                            />
                         )}
                     </Fragment>
                 ))}
@@ -128,7 +212,7 @@ export function DashboardSidebar({
             <div className="border-t border-[#e2e8f0] px-4 pt-[17px] pb-4">
                 <button
                     type="button"
-                    onClick={handleLogout}
+                    onClick={onLogout}
                     className={cn(
                         'flex w-full items-center rounded-lg text-left transition-colors hover:bg-slate-50',
                         styles.itemGap,
@@ -153,20 +237,20 @@ export function DashboardSidebar({
                     </span>
                 </button>
             </div>
-        </aside>
+        </div>
     );
 }
-
-type NavItemStyles = (typeof densityStyles)[DashboardSidebarDensity];
 
 function NavLink({
     item,
     url,
     styles,
+    onNavigate,
 }: {
     item: DashboardNavItem;
     url: string;
     styles: NavItemStyles;
+    onNavigate?: () => void;
 }) {
     const isActive = isItemActive(item, url);
     const content = (
@@ -216,6 +300,7 @@ function NavLink({
             {...(item.openInNewTab
                 ? { target: '_blank', rel: 'noopener noreferrer' }
                 : {})}
+            onClick={onNavigate}
             className={cn(
                 'flex items-center rounded-lg transition-colors',
                 styles.itemGap,
@@ -232,10 +317,12 @@ function CollapsibleNavItem({
     item,
     url,
     styles,
+    onNavigate,
 }: {
     item: DashboardNavItem;
     url: string;
     styles: NavItemStyles;
+    onNavigate?: () => void;
 }) {
     const isActive = isBranchActive(item, url);
     const [isOpen, setIsOpen] = useState(isActive);
@@ -290,6 +377,7 @@ function CollapsibleNavItem({
                             <Link
                                 key={child.title}
                                 href={child.href ?? '#'}
+                                onClick={onNavigate}
                                 className={cn(
                                     'rounded-lg font-inter transition-colors',
                                     styles.childLabel,

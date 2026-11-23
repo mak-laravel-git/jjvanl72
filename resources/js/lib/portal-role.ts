@@ -277,7 +277,6 @@ const submitterNav: PortalNavItem[] = [
         href: create.url(),
         match: ['/cases/create'],
         permission: 'cases.create',
-        openInNewTab: true,
     },
     {
         title: 'Draft Cases',
@@ -348,7 +347,6 @@ const submitterQuickActions: PortalQuickAction[] = [
         icon: portalAsset('action-create-case.svg'),
         href: create.url(),
         permission: 'cases.create',
-        openInNewTab: true,
     },
     {
         label: 'Continue Draft',
@@ -456,7 +454,6 @@ const submitterView = (organization: string): Omit<PortalView, 'role'> => ({
         label: 'Create New Case',
         href: create.url(),
         permission: 'cases.create',
-        openInNewTab: true,
     },
     nav: submitterNav,
     stats: submitterStats,

@@ -16,7 +16,7 @@ export function PortalPageShell({
     children,
     createHref,
     subtitle,
-    openCreateInNewTab = true,
+    openCreateInNewTab = false,
 }: PortalPageShellProps) {
     return (
         <PortalLayout>

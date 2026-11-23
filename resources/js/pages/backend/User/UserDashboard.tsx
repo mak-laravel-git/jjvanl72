@@ -171,7 +171,7 @@ function SubmitterDashboard() {
                         {showPrimaryAction && (
                             <Link
                                 href={view.primaryAction?.href ?? create.url()}
-                                {...(view.primaryAction?.openInNewTab !== false
+                                {...(view.primaryAction?.openInNewTab
                                     ? {
                                           target: '_blank',
                                           rel: 'noopener noreferrer',

@@ -359,7 +359,27 @@
     font-weight: 650;
 }
 
-.create-case-app .flow-help svg {
+.create-case-app .flow-help-back {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: var(--primary);
+    background: transparent;
+    cursor: pointer;
+}
+
+.create-case-app .flow-help-back svg {
+    width: 22px;
+    height: 22px;
+}
+
+.create-case-app .flow-help > svg {
     width: 19px;
     height: 19px;
     flex: 0 0 auto;
