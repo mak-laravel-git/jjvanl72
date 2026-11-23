@@ -160,7 +160,7 @@ export default function DesignerAssignedCases({ cases }: Props) {
 
                 <div className="mt-4 overflow-hidden rounded border border-[#e5e7eb] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[1100px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[1100px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e5e7eb] bg-[#f9fafb]">
                                     {tableHeadings.map((heading) => (
@@ -183,22 +183,38 @@ export default function DesignerAssignedCases({ cases }: Props) {
                                                 'bg-[rgba(249,250,251,0.2)]',
                                         )}
                                     >
-                                        <td className="px-4 py-3 text-sm font-semibold tracking-[-0.16px] whitespace-nowrap text-[#0260bd]">
+                                        <td
+                                            data-label="Case ID"
+                                            className="px-4 py-3 text-sm font-semibold tracking-[-0.16px] whitespace-nowrap text-[#0260bd]"
+                                        >
                                             {item.id}
                                         </td>
-                                        <td className="px-4 py-3 text-xs tracking-[-0.12px] whitespace-nowrap text-[#475569]">
+                                        <td
+                                            data-label="Customer"
+                                            className="px-4 py-3 text-xs tracking-[-0.12px] whitespace-nowrap text-[#475569]"
+                                        >
                                             {item.customer}
                                         </td>
-                                        <td className="px-4 py-3 text-xs font-semibold tracking-[-0.12px] whitespace-nowrap text-[#050315]">
+                                        <td
+                                            data-label="Product Type"
+                                            className="px-4 py-3 text-xs font-semibold tracking-[-0.12px] whitespace-nowrap text-[#050315]"
+                                        >
                                             {item.product}
                                         </td>
-                                        <td className="px-4 py-3 text-xs tracking-[-0.12px] whitespace-nowrap text-[#475569]">
+                                        <td
+                                            data-label="Dentist / Lab"
+                                            className="px-4 py-3 text-xs tracking-[-0.12px] whitespace-nowrap text-[#475569]"
+                                        >
                                             {item.client}
                                         </td>
-                                        <td className="px-4 py-3 text-xs tracking-[-0.12px] whitespace-nowrap text-[#475569]">
+                                        <td
+                                            data-label="Assigned"
+                                            className="px-4 py-3 text-xs tracking-[-0.12px] whitespace-nowrap text-[#475569]"
+                                        >
                                             {item.assigned_date}
                                         </td>
                                         <td
+                                            data-label="Due Date"
                                             className={cn(
                                                 'px-4 py-3 text-xs tracking-[-0.12px] whitespace-nowrap',
                                                 item.due_urgent
@@ -209,6 +225,7 @@ export default function DesignerAssignedCases({ cases }: Props) {
                                             {item.due_date}
                                         </td>
                                         <td
+                                            data-label="Priority"
                                             className={cn(
                                                 'px-4 py-3 text-xs font-semibold tracking-[-0.12px] whitespace-nowrap',
                                                 priorityClasses[item.priority],
@@ -216,7 +233,10 @@ export default function DesignerAssignedCases({ cases }: Props) {
                                         >
                                             {item.priority}
                                         </td>
-                                        <td className="px-4 py-3">
+                                        <td
+                                            data-label="Status"
+                                            className="px-4 py-3"
+                                        >
                                             <span
                                                 className={cn(
                                                     'inline-flex rounded border px-[9px] py-0.5 text-[10px] leading-3 font-medium',
@@ -228,7 +248,10 @@ export default function DesignerAssignedCases({ cases }: Props) {
                                                 {item.status}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-3">
+                                        <td
+                                            data-label="Actions"
+                                            className="px-4 py-3"
+                                        >
                                             <Link
                                                 href={designerCaseHref(
                                                     item.id,

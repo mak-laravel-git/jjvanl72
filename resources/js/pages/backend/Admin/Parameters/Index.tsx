@@ -13,13 +13,13 @@ import {
 import AdminLayout from '@/layouts/admin-layout';
 import { cn } from '@/lib/utils';
 import {
-    create as parametersCreate,
     destroy,
+    create as parametersCreate,
     edit as parametersEdit,
     index as parametersIndex,
 } from '@/routes/admin/parameters';
-import type { PaginationData } from '@/types/data-table.types';
 import type { SharedData } from '@/types';
+import type { PaginationData } from '@/types/data-table.types';
 import type {
     GroupOption,
     MaterialOption,
@@ -393,9 +393,7 @@ export default function ParametersIndex({
                     <Select
                         value={typeFilter || ALL_TYPES_VALUE}
                         onValueChange={(value) =>
-                            filterByType(
-                                value === ALL_TYPES_VALUE ? '' : value,
-                            )
+                            filterByType(value === ALL_TYPES_VALUE ? '' : value)
                         }
                     >
                         <SelectTrigger
@@ -409,10 +407,7 @@ export default function ParametersIndex({
                                 All types
                             </SelectItem>
                             {typeOptions.map((type) => (
-                                <SelectItem
-                                    key={type.value}
-                                    value={type.value}
-                                >
+                                <SelectItem key={type.value} value={type.value}>
                                     {type.label}
                                 </SelectItem>
                             ))}
@@ -446,7 +441,7 @@ export default function ParametersIndex({
 
                 <div className="mt-[22.5px] overflow-hidden rounded-[13.375px] border border-[#e2e8f0] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[1180px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[1180px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[19px] py-[11px]">#</th>
@@ -516,41 +511,65 @@ export default function ParametersIndex({
                                                     'border-b',
                                             )}
                                         >
-                                            <td className="px-[19px] py-[14px] text-[11.25px] text-[#475569]">
+                                            <td
+                                                data-label="#"
+                                                className="px-[19px] py-[14px] text-[11.25px] text-[#475569]"
+                                            >
                                                 {offset + index + 1}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]">
+                                            <td
+                                                data-label="Name"
+                                                className="px-[19px] py-[14px] text-[13.125px] font-semibold text-[#050315]"
+                                            >
                                                 {parameter.name}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Field"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <span className="font-mono text-[13.125px] font-semibold text-[#0260bd]">
                                                     {parameter.field_name}
                                                 </span>
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Type"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <span className="rounded-full bg-[#eff6ff] px-2.5 py-1 text-[11.25px] font-semibold text-[#0260bd]">
                                                     {parameter.type_label}
                                                 </span>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] text-[#475569]">
+                                            <td
+                                                data-label="Group"
+                                                className="px-[19px] py-[14px] text-[13.125px] text-[#475569]"
+                                            >
                                                 {formatRelationLabel(
                                                     parameter.group_code,
                                                     parameter.group_name,
                                                 )}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] text-[#475569]">
+                                            <td
+                                                data-label="Product"
+                                                className="px-[19px] py-[14px] text-[13.125px] text-[#475569]"
+                                            >
                                                 {formatRelationLabel(
                                                     parameter.product_code,
                                                     parameter.product_name,
                                                 )}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[13.125px] text-[#475569]">
+                                            <td
+                                                data-label="Material"
+                                                className="px-[19px] py-[14px] text-[13.125px] text-[#475569]"
+                                            >
                                                 {formatRelationLabel(
                                                     parameter.material_code,
                                                     parameter.material_name,
                                                 )}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Options"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <button
                                                     type="button"
                                                     onClick={() =>
@@ -565,10 +584,16 @@ export default function ParametersIndex({
                                                         : `${parameter.options_count} option${parameter.options_count === 1 ? '' : 's'}`}
                                                 </button>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] text-[#475569]">
+                                            <td
+                                                data-label="Updated"
+                                                className="px-[19px] py-[14px] text-[11.25px] text-[#475569]"
+                                            >
                                                 {parameter.updated_at}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center justify-end gap-[1.875px]">
                                                     <button
                                                         type="button"
@@ -666,13 +691,10 @@ export default function ParametersIndex({
                                         <button
                                             key={page}
                                             type="button"
-                                            onClick={() =>
-                                                navigate({ page })
-                                            }
+                                            onClick={() => navigate({ page })}
                                             className={cn(
                                                 'rounded-[9.375px] border px-[9px] py-[5px] text-[11.25px] font-semibold',
-                                                page ===
-                                                    pagination.current_page
+                                                page === pagination.current_page
                                                     ? 'border-[#0260bd] bg-[#0260bd] text-white'
                                                     : 'border-[#e2e8f0] bg-white text-[#475569]',
                                             )}
@@ -746,10 +768,7 @@ export default function ParametersIndex({
                 {viewTarget ? (
                     <div className="space-y-5 px-[22.5px] py-5">
                         <div className="grid gap-3 sm:grid-cols-2">
-                            <DetailField
-                                label="Name"
-                                value={viewTarget.name}
-                            />
+                            <DetailField label="Name" value={viewTarget.name} />
                             <DetailField
                                 label="Field name"
                                 value={viewTarget.field_name}
@@ -801,14 +820,13 @@ export default function ParametersIndex({
                                 </p>
                             ) : (
                                 <div className="overflow-hidden rounded-[9.375px] border border-[#e2e8f0]">
-                                    <table className="w-full border-collapse">
+                                    <table className="responsive-cards w-full border-collapse">
                                         <thead>
                                             <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                                 <th className="px-3 py-2">
                                                     Name
                                                 </th>
-                                                {viewTarget.type ===
-                                                'input' ? (
+                                                {viewTarget.type === 'input' ? (
                                                     <>
                                                         <th className="px-3 py-2">
                                                             Field name
@@ -839,28 +857,43 @@ export default function ParametersIndex({
                                                         key={option.id}
                                                         className="border-b border-[#e2e8f0] last:border-b-0"
                                                     >
-                                                        <td className="px-3 py-2.5 text-[13.125px] font-semibold text-[#050315]">
+                                                        <td
+                                                            data-label="Name"
+                                                            className="px-3 py-2.5 text-[13.125px] font-semibold text-[#050315]"
+                                                        >
                                                             {option.label}
                                                         </td>
                                                         {viewTarget.type ===
                                                         'input' ? (
                                                             <>
-                                                                <td className="px-3 py-2.5 font-mono text-[13.125px] text-[#0260bd]">
+                                                                <td
+                                                                    data-label="Field name"
+                                                                    className="px-3 py-2.5 font-mono text-[13.125px] text-[#0260bd]"
+                                                                >
                                                                     {option.field_name ??
                                                                         '—'}
                                                                 </td>
-                                                                <td className="px-3 py-2.5 text-[13.125px] text-[#475569]">
+                                                                <td
+                                                                    data-label="Placeholder"
+                                                                    className="px-3 py-2.5 text-[13.125px] text-[#475569]"
+                                                                >
                                                                     {option.placeholder ??
                                                                         '—'}
                                                                 </td>
                                                             </>
                                                         ) : (
                                                             <>
-                                                                <td className="px-3 py-2.5 text-[13.125px] text-[#475569]">
+                                                                <td
+                                                                    data-label="Value"
+                                                                    className="px-3 py-2.5 text-[13.125px] text-[#475569]"
+                                                                >
                                                                     {option.value ??
                                                                         '—'}
                                                                 </td>
-                                                                <td className="px-3 py-2.5">
+                                                                <td
+                                                                    data-label="Color"
+                                                                    className="px-3 py-2.5"
+                                                                >
                                                                     {option.color ? (
                                                                         <span className="inline-flex items-center gap-2 text-[13.125px] text-[#475569]">
                                                                             <span
@@ -883,7 +916,10 @@ export default function ParametersIndex({
                                                                         </span>
                                                                     )}
                                                                 </td>
-                                                                <td className="px-3 py-2.5">
+                                                                <td
+                                                                    data-label="Icon"
+                                                                    className="px-3 py-2.5"
+                                                                >
                                                                     {option.image_url ? (
                                                                         <img
                                                                             src={
@@ -1019,10 +1055,7 @@ function SortHeader({
     );
 }
 
-function buildPageNumbers(
-    current: number,
-    last: number,
-): Array<number | '…'> {
+function buildPageNumbers(current: number, last: number): Array<number | '…'> {
     if (last <= 1) {
         return last === 1 ? [1] : [];
     }

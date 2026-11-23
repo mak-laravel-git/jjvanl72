@@ -246,7 +246,7 @@ function AssignedJobsPage({ jobs }: { jobs: AssignedJob[] }) {
 
                     <div className="overflow-hidden rounded-[10px] border border-[#e5e7eb] bg-white">
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[1100px] border-collapse">
+                            <table className="responsive-cards w-full min-w-[1100px] border-collapse">
                                 <thead>
                                     <tr className="bg-[#e2e8f0]">
                                         {[
@@ -279,28 +279,52 @@ function AssignedJobsPage({ jobs }: { jobs: AssignedJob[] }) {
                                             key={job.id}
                                             className="border-t border-[#e2e8f0]"
                                         >
-                                            <td className="px-6 py-4 text-sm font-semibold tracking-[-0.16px] text-[#0260bd]">
+                                            <td
+                                                data-label="Case ID"
+                                                className="px-6 py-4 text-sm font-semibold tracking-[-0.16px] text-[#0260bd]"
+                                            >
                                                 {job.id}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Customer"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.customer}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Type"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.type}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Product"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.product}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Material"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.material}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Due Date"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.due_date}
                                             </td>
-                                            <td className="px-6 py-4 text-sm font-semibold tracking-[-0.16px] text-[#ef4444]">
+                                            <td
+                                                data-label="Priority"
+                                                className="px-6 py-4 text-sm font-semibold tracking-[-0.16px] text-[#ef4444]"
+                                            >
                                                 {job.priority}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td
+                                                data-label="Status"
+                                                className="px-6 py-4"
+                                            >
                                                 <span
                                                     className={cn(
                                                         'inline-flex rounded px-1.5 py-0.5 text-[10px] leading-[15px] tracking-[-0.12px]',
@@ -312,7 +336,10 @@ function AssignedJobsPage({ jobs }: { jobs: AssignedJob[] }) {
                                                     {job.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-6 py-4"
+                                            >
                                                 <div className="flex items-center justify-center gap-4 text-[#0260bd]">
                                                     <Link
                                                         href={assignedShow.url(
@@ -383,7 +410,7 @@ function InProductionPage({ jobs }: { jobs: InProductionJob[] }) {
 
                     <div className="overflow-hidden rounded-[10px] border border-[#e5e7eb] bg-white">
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[1050px] border-collapse">
+                            <table className="responsive-cards w-full min-w-[1050px] border-collapse">
                                 <thead>
                                     <tr className="bg-[#e2e8f0]">
                                         {[
@@ -414,27 +441,48 @@ function InProductionPage({ jobs }: { jobs: InProductionJob[] }) {
                                             key={job.id}
                                             className="border-t border-[#e2e8f0]"
                                         >
-                                            <td className="px-6 py-4 text-sm font-semibold tracking-[-0.16px] text-[#0260bd]">
+                                            <td
+                                                data-label="Case ID"
+                                                className="px-6 py-4 text-sm font-semibold tracking-[-0.16px] text-[#0260bd]"
+                                            >
                                                 {job.id}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Customer"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.customer}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Product"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.product}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Material"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.material}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Due Date"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.due_date}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td
+                                                data-label="Priority"
+                                                className="px-6 py-4"
+                                            >
                                                 <span className="inline-flex rounded bg-[#fffbeb] px-[7px] py-1 text-xs leading-4 text-[#bb4d00]">
                                                     {job.priority}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-6 py-4"
+                                            >
                                                 <div className="flex items-center justify-center gap-4">
                                                     <Link
                                                         href={inProductionShow.url(
@@ -487,7 +535,7 @@ function QualityCheckPage({ jobs }: { jobs: QualityCheckJob[] }) {
 
                     <div className="overflow-hidden rounded-[10px] border border-[#e5e7eb] bg-white">
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[1050px] border-collapse">
+                            <table className="responsive-cards w-full min-w-[1050px] border-collapse">
                                 <thead>
                                     <tr className="bg-[#e2e8f0]">
                                         {[
@@ -518,7 +566,10 @@ function QualityCheckPage({ jobs }: { jobs: QualityCheckJob[] }) {
                                             key={job.id}
                                             className="border-t border-[#e2e8f0]"
                                         >
-                                            <td className="px-6 py-4 text-sm font-semibold tracking-[-0.16px]">
+                                            <td
+                                                data-label="Case ID"
+                                                className="px-6 py-4 text-sm font-semibold tracking-[-0.16px]"
+                                            >
                                                 <Link
                                                     href={jobDetailHref(job.id)}
                                                     className="text-[#0260bd] hover:underline"
@@ -526,24 +577,42 @@ function QualityCheckPage({ jobs }: { jobs: QualityCheckJob[] }) {
                                                     {job.id}
                                                 </Link>
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Customer"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.customer}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Product"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.product}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Material"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.material}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Due Date"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.due_date}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td
+                                                data-label="Priority"
+                                                className="px-6 py-4"
+                                            >
                                                 <span className="inline-flex rounded bg-[#eff6ff] px-[7px] py-1 text-xs leading-4 text-[#0260bd]">
                                                     {job.priority}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-6 py-4"
+                                            >
                                                 <div className="flex items-center justify-center gap-4">
                                                     <Link
                                                         href={jobDetailHref(
@@ -604,7 +673,7 @@ function ReadyToShipPage({ jobs }: { jobs: ReadyToShipJob[] }) {
 
                     <div className="overflow-hidden rounded-[10px] border border-[#e5e7eb] bg-white">
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[1100px] border-collapse">
+                            <table className="responsive-cards w-full min-w-[1100px] border-collapse">
                                 <thead>
                                     <tr className="bg-[#e2e8f0]">
                                         {[
@@ -635,7 +704,10 @@ function ReadyToShipPage({ jobs }: { jobs: ReadyToShipJob[] }) {
                                             key={job.id}
                                             className="border-t border-[#e2e8f0]"
                                         >
-                                            <td className="px-6 py-4 text-sm font-semibold tracking-[-0.16px]">
+                                            <td
+                                                data-label="Case ID"
+                                                className="px-6 py-4 text-sm font-semibold tracking-[-0.16px]"
+                                            >
                                                 <Link
                                                     href={jobDetailHref(job.id)}
                                                     className="text-[#0260bd] hover:underline"
@@ -643,22 +715,40 @@ function ReadyToShipPage({ jobs }: { jobs: ReadyToShipJob[] }) {
                                                     {job.id}
                                                 </Link>
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Customer"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.customer}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Product"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.product}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Material"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.material}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Due Date"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.due_date}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Shipping Address"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.shipping_address}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-6 py-4"
+                                            >
                                                 <div className="flex items-center justify-center gap-4">
                                                     <Link
                                                         href={jobDetailHref(
@@ -712,7 +802,7 @@ function ShippedOrdersPage({ jobs }: { jobs: ShippedJob[] }) {
 
                     <div className="overflow-hidden rounded-[10px] border border-[#e5e7eb] bg-white">
                         <div className="overflow-x-auto">
-                            <table className="w-full min-w-[1100px] border-collapse">
+                            <table className="responsive-cards w-full min-w-[1100px] border-collapse">
                                 <thead>
                                     <tr className="bg-[#e2e8f0]">
                                         {[
@@ -743,7 +833,10 @@ function ShippedOrdersPage({ jobs }: { jobs: ShippedJob[] }) {
                                             key={job.id}
                                             className="border-t border-[#e2e8f0]"
                                         >
-                                            <td className="px-6 py-4 text-sm font-semibold tracking-[-0.16px]">
+                                            <td
+                                                data-label="Case ID"
+                                                className="px-6 py-4 text-sm font-semibold tracking-[-0.16px]"
+                                            >
                                                 <Link
                                                     href={jobDetailHref(job.id)}
                                                     className="text-[#0260bd] hover:underline"
@@ -751,16 +844,28 @@ function ShippedOrdersPage({ jobs }: { jobs: ShippedJob[] }) {
                                                     {job.id}
                                                 </Link>
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Customer"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.customer}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Product"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.product}
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Courier"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.courier}
                                             </td>
-                                            <td className="px-6 py-4 text-sm font-medium tracking-[-0.16px]">
+                                            <td
+                                                data-label="Tracking Number"
+                                                className="px-6 py-4 text-sm font-medium tracking-[-0.16px]"
+                                            >
                                                 <a
                                                     href={`https://www.fedex.com/fedextrack/?trknbr=${encodeURIComponent(job.tracking_number)}`}
                                                     target="_blank"
@@ -770,10 +875,16 @@ function ShippedOrdersPage({ jobs }: { jobs: ShippedJob[] }) {
                                                     {job.tracking_number}
                                                 </a>
                                             </td>
-                                            <td className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]">
+                                            <td
+                                                data-label="Est. Delivery"
+                                                className="px-6 py-4 text-sm tracking-[-0.16px] text-[#050315]"
+                                            >
                                                 {job.est_delivery}
                                             </td>
-                                            <td className="px-6 py-4">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-6 py-4"
+                                            >
                                                 <div className="flex items-center justify-center gap-4">
                                                     <Link
                                                         href={jobDetailHref(

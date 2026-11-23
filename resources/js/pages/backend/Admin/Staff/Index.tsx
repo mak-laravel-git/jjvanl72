@@ -1,7 +1,6 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
-import AdminLayout from '@/layouts/admin-layout';
 import {
     Select,
     SelectContent,
@@ -9,13 +8,14 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import AdminLayout from '@/layouts/admin-layout';
 import { cn } from '@/lib/utils';
 import {
     create,
     destroy,
     edit,
-    index as staffIndex,
     show,
+    index as staffIndex,
 } from '@/routes/admin/staff';
 import type { SharedData } from '@/types';
 
@@ -225,9 +225,7 @@ export default function StaffIndex({
                     <Select
                         value={role || ALL_ROLES_VALUE}
                         onValueChange={(value) =>
-                            filterByRole(
-                                value === ALL_ROLES_VALUE ? '' : value,
-                            )
+                            filterByRole(value === ALL_ROLES_VALUE ? '' : value)
                         }
                     >
                         <SelectTrigger
@@ -251,7 +249,7 @@ export default function StaffIndex({
 
                 <div className="mt-[22.5px] overflow-hidden rounded-[13.375px] border border-[#e2e8f0] bg-white">
                     <div className="overflow-x-auto">
-                        <table className="w-full min-w-[980px] border-collapse">
+                        <table className="responsive-cards w-full min-w-[980px] border-collapse">
                             <thead>
                                 <tr className="border-b border-[#e2e8f0] bg-[#f9fafb] text-left text-[11.25px] font-bold tracking-[0.5625px] text-[#475569] uppercase">
                                     <th className="px-[19px] py-[11px]">
@@ -298,7 +296,10 @@ export default function StaffIndex({
                                                     'border-b',
                                             )}
                                         >
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Name"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center gap-[11.25px]">
                                                     {admin.avatar_url ? (
                                                         <img
@@ -350,7 +351,10 @@ export default function StaffIndex({
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]">
+                                            <td
+                                                data-label="Email"
+                                                className="px-[19px] py-[14px] text-[11.25px] leading-[15px] text-[#475569]"
+                                            >
                                                 <Link
                                                     href={show.url(admin.id)}
                                                     className="hover:text-[#0260bd] hover:underline"
@@ -358,13 +362,22 @@ export default function StaffIndex({
                                                     {admin.email}
                                                 </Link>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] text-[#475569]">
+                                            <td
+                                                data-label="Phone"
+                                                className="px-[19px] py-[14px] text-[11.25px] text-[#475569]"
+                                            >
                                                 {admin.phone || '—'}
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] text-[#475569]">
+                                            <td
+                                                data-label="Location"
+                                                className="px-[19px] py-[14px] text-[11.25px] text-[#475569]"
+                                            >
                                                 {admin.location || '—'}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Status"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <span
                                                     className={cn(
                                                         'rounded-full px-2.5 py-1 text-[11.25px] font-semibold',
@@ -377,10 +390,16 @@ export default function StaffIndex({
                                                     {admin.status ?? 'Active'}
                                                 </span>
                                             </td>
-                                            <td className="px-[19px] py-[14px] text-[11.25px] text-[#475569]">
+                                            <td
+                                                data-label="Joined"
+                                                className="px-[19px] py-[14px] text-[11.25px] text-[#475569]"
+                                            >
                                                 {admin.joined || '—'}
                                             </td>
-                                            <td className="px-[19px] py-[14px]">
+                                            <td
+                                                data-label="Actions"
+                                                className="px-[19px] py-[14px]"
+                                            >
                                                 <div className="flex items-center justify-end gap-[1.875px]">
                                                     <Link
                                                         href={show.url(

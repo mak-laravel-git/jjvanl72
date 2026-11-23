@@ -168,7 +168,7 @@ export default function DesignerDashboard() {
                             </div>
 
                             <div className="overflow-x-auto">
-                                <table className="w-full min-w-[900px] border-collapse">
+                                <table className="responsive-cards w-full min-w-[900px] border-collapse">
                                     <thead>
                                         <tr className="border-b border-[#e2e8f0] bg-[#f8fafc]">
                                             {[
@@ -196,19 +196,32 @@ export default function DesignerDashboard() {
                                                     key={item.id}
                                                     className="border-b border-[#f1f5f9] last:border-b-0"
                                                 >
-                                                    <td className="px-4 py-3 text-sm font-medium text-[#0260bd]">
+                                                    <td
+                                                        data-label="Case ID"
+                                                        className="px-4 py-3 text-sm font-medium text-[#0260bd]"
+                                                    >
                                                         {item.id}
                                                     </td>
-                                                    <td className="px-4 py-3 text-sm text-[#475569]">
+                                                    <td
+                                                        data-label="Product"
+                                                        className="px-4 py-3 text-sm text-[#475569]"
+                                                    >
                                                         {item.product}
                                                     </td>
-                                                    <td className="px-4 py-3 text-sm text-[#475569]">
+                                                    <td
+                                                        data-label="Dentist / Lab"
+                                                        className="px-4 py-3 text-sm text-[#475569]"
+                                                    >
                                                         {item.client}
                                                     </td>
-                                                    <td className="px-4 py-3 text-sm text-[#475569]">
+                                                    <td
+                                                        data-label="Due Date"
+                                                        className="px-4 py-3 text-sm text-[#475569]"
+                                                    >
                                                         {item.dueDate}
                                                     </td>
                                                     <td
+                                                        data-label="Priority"
                                                         className={cn(
                                                             'px-4 py-3 text-sm font-medium',
                                                             priorityClasses[
@@ -218,7 +231,10 @@ export default function DesignerDashboard() {
                                                     >
                                                         {item.priority}
                                                     </td>
-                                                    <td className="px-4 py-3">
+                                                    <td
+                                                        data-label="Status"
+                                                        className="px-4 py-3"
+                                                    >
                                                         <span
                                                             className={cn(
                                                                 'inline-flex rounded px-2 py-1 text-[12px] leading-3 font-medium',
@@ -231,7 +247,10 @@ export default function DesignerDashboard() {
                                                             {item.status}
                                                         </span>
                                                     </td>
-                                                    <td className="px-4 py-3">
+                                                    <td
+                                                        data-label="Actions"
+                                                        className="px-4 py-3"
+                                                    >
                                                         <Link
                                                             href={designerAssigned.url()}
                                                             className="text-sm font-medium text-[#0260bd] transition-opacity hover:opacity-80"

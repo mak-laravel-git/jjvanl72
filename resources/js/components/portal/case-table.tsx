@@ -132,7 +132,7 @@ export function PortalCaseTable({ cases, actionHrefs }: PortalCaseTableProps) {
     return (
         <div className="overflow-hidden rounded-lg border border-[#f3f4f6] bg-white shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
             <div className="overflow-x-auto">
-                <table className="w-full min-w-[1100px] border-collapse">
+                <table className="responsive-cards w-full min-w-[1100px] border-collapse">
                     <thead>
                         <tr className="bg-[#f9fafb]">
                             {tableHeaders.map((heading) => (
@@ -162,31 +162,52 @@ export function PortalCaseTable({ cases, actionHrefs }: PortalCaseTableProps) {
                                         : 'border-t border-[#f3f4f6]',
                                 )}
                             >
-                                <td className="px-6 py-5 text-sm font-semibold tracking-[-0.16px] text-[#050315]">
+                                <td
+                                    data-label="Case ID"
+                                    className="px-6 py-5 text-sm font-semibold tracking-[-0.16px] text-[#050315]"
+                                >
                                     {item.id}
                                 </td>
-                                <td className="px-6 py-5 text-sm tracking-[-0.16px] text-[#050315]">
+                                <td
+                                    data-label="Patient Reference"
+                                    className="px-6 py-5 text-sm tracking-[-0.16px] text-[#050315]"
+                                >
                                     {item.patient}
                                 </td>
-                                <td className="px-6 py-5 text-sm tracking-[-0.16px] text-[#050315]">
+                                <td
+                                    data-label="Product"
+                                    className="px-6 py-5 text-sm tracking-[-0.16px] text-[#050315]"
+                                >
                                     {item.product}
                                 </td>
-                                <td className="px-6 py-5 text-center">
+                                <td
+                                    data-label="Status"
+                                    className="px-6 py-5 text-center"
+                                >
                                     <PortalStatusBadge
                                         status={item.status}
                                         tone={item.status_tone}
                                     />
                                 </td>
-                                <td className="px-6 py-5 text-sm tracking-[-0.16px] text-[#475569]">
+                                <td
+                                    data-label="Submission Date"
+                                    className="px-6 py-5 text-sm tracking-[-0.16px] text-[#475569]"
+                                >
                                     {item.submission_date ?? '-'}
                                 </td>
-                                <td className="px-6 py-5 text-sm tracking-[-0.16px] text-[#475569]">
+                                <td
+                                    data-label="Due Date"
+                                    className="px-6 py-5 text-sm tracking-[-0.16px] text-[#475569]"
+                                >
                                     {item.due_date ?? '-'}
                                 </td>
-                                <td className="px-6 py-5 text-sm tracking-[-0.16px] text-[#050315]">
+                                <td
+                                    data-label="Manufacturing Type"
+                                    className="px-6 py-5 text-sm tracking-[-0.16px] text-[#050315]"
+                                >
                                     {item.manufacturing_type}
                                 </td>
-                                <td className="px-6 py-5">
+                                <td data-label="Actions" className="px-6 py-5">
                                     <CaseActions
                                         actions={item.actions}
                                         row={item}

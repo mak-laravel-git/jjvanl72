@@ -142,9 +142,9 @@ export default function ShowCase({ caseDetail, catalog }: Props) {
         <PortalLayout>
             <Head title={`Case ${c.id}`} />
 
-            <div className="bg-[#fdfdfd] p-8 font-inter">
+            <div className="bg-[#fdfdfd] p-4 font-inter sm:p-6 lg:p-8">
                 <div className="flex flex-col gap-8">
-                    <div className="flex items-start justify-between">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
                         <div className="flex flex-col gap-1">
                             <Link
                                 href={active.url()}
@@ -156,7 +156,7 @@ export default function ShowCase({ caseDetail, catalog }: Props) {
                             <h1 className="text-[32px] leading-9.5 font-semibold tracking-[-0.2px] text-[#050315]">
                                 Case {c.id}
                             </h1>
-                            <div className="mt-1 flex items-center gap-3">
+                            <div className="mt-1 flex flex-wrap items-center gap-3">
                                 <PortalStatusBadge
                                     status={c.status}
                                     tone={c.status_tone}
@@ -164,7 +164,9 @@ export default function ShowCase({ caseDetail, catalog }: Props) {
                                 <span className="text-sm text-[#475569]">
                                     {c.product}
                                 </span>
-                                <span className="text-sm text-[#475569]">·</span>
+                                <span className="text-sm text-[#475569]">
+                                    ·
+                                </span>
                                 <span className="text-sm text-[#475569]">
                                     {c.manufacturing_type}
                                 </span>
@@ -178,15 +180,18 @@ export default function ShowCase({ caseDetail, catalog }: Props) {
                         </Link>
                     </div>
 
-                    <div className="flex items-start gap-5">
-                        <div className="w-95.5 shrink-0 rounded-lg border border-[#e2e8f0] bg-white shadow-[0px_1px_1px_rgba(0,0,0,0.05)]">
+                    <div className="flex flex-col gap-5 xl:flex-row xl:items-start">
+                        <div className="w-full shrink-0 rounded-lg border border-[#e2e8f0] bg-white shadow-[0px_1px_1px_rgba(0,0,0,0.05)] xl:w-80 2xl:w-95.5">
                             <div className="border-b border-[#e2e8f0] px-4 py-4">
                                 <p className="text-sm font-bold text-[#1e293b]">
                                     Case Details
                                 </p>
                             </div>
                             <div className="flex flex-col gap-5 p-4">
-                                <InfoRow label="REFERENCE" value={c.reference} />
+                                <InfoRow
+                                    label="REFERENCE"
+                                    value={c.reference}
+                                />
                                 <InfoRow label="PATIENT" value={c.patient} />
                                 <InfoRow label="NOTES" value={c.notes} />
 
@@ -202,7 +207,9 @@ export default function ShowCase({ caseDetail, catalog }: Props) {
                                 </div>
 
                                 <div className="flex items-center justify-between">
-                                    <span className={labelCls}>CASE APPROVAL</span>
+                                    <span className={labelCls}>
+                                        CASE APPROVAL
+                                    </span>
                                     <span
                                         className={cn(
                                             'rounded-full px-2.5 py-0.5 text-xs font-medium',
@@ -211,12 +218,20 @@ export default function ShowCase({ caseDetail, catalog }: Props) {
                                                 : 'bg-[#f3f4f6] text-[#475569]',
                                         )}
                                     >
-                                        {c.case_approval ? 'Enabled' : 'Disabled'}
+                                        {c.case_approval
+                                            ? 'Enabled'
+                                            : 'Disabled'}
                                     </span>
                                 </div>
 
-                                <InfoRow label="CASE SHADE" value={c.case_shade} />
-                                <InfoRow label="SCAN MODE" value={c.scan_mode} />
+                                <InfoRow
+                                    label="CASE SHADE"
+                                    value={c.case_shade}
+                                />
+                                <InfoRow
+                                    label="SCAN MODE"
+                                    value={c.scan_mode}
+                                />
                                 <InfoRow
                                     label="SOURCE SCANNER"
                                     value={c.source_scanner}
@@ -236,7 +251,7 @@ export default function ShowCase({ caseDetail, catalog }: Props) {
                             </div>
                         </div>
 
-                        <div className="min-w-0 flex-1">
+                        <div className="w-full min-w-0 xl:flex-1">
                             <div className="rounded-lg border border-[#e2e8f0] bg-white shadow-[0px_1px_1px_rgba(0,0,0,0.05)]">
                                 <div className="border-b border-[#e2e8f0] px-6 py-4">
                                     <p className="text-sm font-bold text-[#1e293b]">
@@ -252,7 +267,7 @@ export default function ShowCase({ caseDetail, catalog }: Props) {
                             </div>
                         </div>
 
-                        <div className="flex w-95.5 shrink-0 flex-col gap-4">
+                        <div className="flex w-full shrink-0 flex-col gap-4 xl:w-80 2xl:w-95.5">
                             <div className="rounded-lg border border-[#e2e8f0] bg-white shadow-[0px_1px_1px_rgba(0,0,0,0.05)]">
                                 <div className="border-b border-[#e2e8f0] px-4 py-4">
                                     <p className="text-sm font-bold text-[#1e293b]">
